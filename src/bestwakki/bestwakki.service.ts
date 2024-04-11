@@ -45,6 +45,18 @@ export class BestwakkiService {
     };
 
     return this.popularArticleRepository.find({
+      select: [
+        'articleId',
+        'publishedTimestamp',
+        'subject',
+        'readCount',
+        'commentCount',
+        'upCount',
+        'menuId',
+        'menuName',
+        'nickname',
+        'representImage',
+      ],
       where: {
         [searchTargetColumn[searchArticleDto.searchTarget]]: ILike(
           `%${searchArticleDto.keyword}%`,
