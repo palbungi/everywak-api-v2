@@ -51,6 +51,7 @@ export class SearchArticleDto {
   @Max(500)
   public readonly perPage: number = 30;
 
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
