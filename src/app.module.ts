@@ -15,7 +15,11 @@ import youtubeConfig from './config/youtube.config';
   imports: [
     ConfigModule.forRoot({
       load: [databaseConfig, youtubeConfig],
-      envFilePath: process.env.NODE_ENV === 'dev' ? '.env.development.local' : '.env.production.local'
+      envFilePath:
+        process.env.NODE_ENV === 'dev'
+          ? '.env.development.local'
+          : '.env.production.local',
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

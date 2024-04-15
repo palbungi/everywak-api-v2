@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { YoutubeModule } from 'src/youtube/youtube.module';
 import { LivePlatform } from './entities/livePlatform.entity';
 import { Member } from './entities/member.entity';
 import { Profile } from './entities/profile.entity';
@@ -17,6 +18,7 @@ import { MemberService } from './member.service';
       Social,
       YoutubeChannel,
     ]),
+    YoutubeModule,
   ],
   controllers: [MemberController],
   providers: [MemberService],

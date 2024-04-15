@@ -1,6 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Waktaverse } from 'src/constants/waktaverse';
+import { SelectChannelDto } from 'src/youtube/dto/select-channel.dto';
+import { YoutubeService } from 'src/youtube/youtube.service';
 import { Repository } from 'typeorm';
 import { ulid } from 'ulidx';
 import { CreateLivePlatformDto } from './dto/create-live-platform.dto';
@@ -18,7 +20,9 @@ import { YoutubeChannel } from './entities/youtubeChannel.entity';
 @Injectable()
 export class MemberService {
   @InjectRepository(Member)
-  private memberRepository: Repository<Member>;
+  private readonly memberRepository: Repository<Member>;
+  @Inject(YoutubeService)
+  private readonly youtubeService: YoutubeService;
 
   /**
    * @description 멤버 전체 조회
@@ -256,6 +260,49 @@ export class MemberService {
       },
     );
 
+    await this.updateProfileImageFromYoutube();
+
     return await this.findAll();
+  }
+
+  /**
+   * @description 모든 멤버 프로필 이미지 유튜브 프사 가져오기
+   */
+  async updateProfileImageFromYoutube() {
+    const members = await this.findAll();
+
+    const youtubeChannel = members
+      .map((member) => {
+        const mainChannel = member.youtubeChannel?.find(
+          (channel) => channel.type === 'main',
+        );
+        if (!mainChannel) {
+          return null;
+        }
+        return {
+          memberId: member.id,
+          channelId: mainChannel.channelId,
+        };
+      })
+      .filter((channel) => channel);
+
+    const channels = await this.youtubeService.getChannels(
+      new SelectChannelDto(youtubeChannel.map((channel) => channel.channelId)),
+    );
+
+    //transaction
+    this.memberRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        for (const [index, channel] of channels.items.entries()) {
+          const member = members.find(
+            (member) => member.id === youtubeChannel.find((c) => c.channelId === channel.id).memberId,
+          );
+          member.profile.profileImage = channel.snippet.thumbnails.default.url;
+          await transactionalEntityManager.save(member);
+        }
+      },
+    );
+
+    return members;
   }
 }
