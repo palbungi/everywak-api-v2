@@ -7,12 +7,14 @@ import { AppController } from './app.controller';
 import { BestwakkiModule } from './bestwakki/bestwakki.module';
 import { NavercafeModule } from './navercafe/navercafe.module';
 import { MemberModule } from './member/member.module';
+import { YoutubeModule } from './youtube/youtube.module';
 import databaseConfig from './config/database.config';
+import youtubeConfig from './config/youtube.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig],
+      load: [databaseConfig, youtubeConfig],
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.development.local' : '.env.production.local'
     }),
     TypeOrmModule.forRootAsync({
@@ -23,6 +25,7 @@ import databaseConfig from './config/database.config';
     BestwakkiModule,
     NavercafeModule,
     MemberModule,
+    YoutubeModule,
   ],
   controllers: [AppController],
   providers: [],
