@@ -37,7 +37,7 @@ export class PopularArticle {
   @Column({ type: 'varchar', length: 33 })
   public nickname: string;
 
-  @Column({ type: 'varchar', length: 30 })
+  @Column({ type: 'varchar', length: 45 })
   public memberKey: string;
 
   @Column('int')
