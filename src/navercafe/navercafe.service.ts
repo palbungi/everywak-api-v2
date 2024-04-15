@@ -22,7 +22,7 @@ export class NavercafeService {
             },
           },
         )
-        .pipe(map((res) =>( console.log(res.data) , res.data.message.result.articleList))),
+        .pipe(map((res) => res.data.message.result.articleList)),
     );
   }
 
