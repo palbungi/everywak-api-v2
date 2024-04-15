@@ -1,10 +1,14 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
+import { lastValueFrom, map } from 'rxjs';
 import { RequestYoutubeDto } from './dto/request-youtube.dto';
 import { SelectChannelDto } from './dto/select-channel.dto';
 import { SelectPlaylistDto } from './dto/select-playlist.dto';
+import {
+  ChannelListResponse,
+  PlaylistItemListResponse,
+} from './youtube.type';
 
 @Injectable()
 export class YoutubeService {
@@ -16,8 +20,12 @@ export class YoutubeService {
 
   private readonly hostname = 'https://www.googleapis.com/youtube/v3';
 
-  async request(dto: RequestYoutubeDto) {
-    return await this.httpService.get(dto.url, { params: dto.params });
+  async request<T>(dto: RequestYoutubeDto): Promise<T> {
+    return await lastValueFrom(
+      this.httpService
+        .get(dto.url, { params: dto.params })
+        .pipe(map((response) => response.data)),
+    );
   }
 
   async getChannels(selectChannelDto: SelectChannelDto) {
@@ -28,7 +36,7 @@ export class YoutubeService {
       id: channelId.join(','),
       key: this.configService.get('youtube.apiKey'),
     };
-    return await this.request({ url, params });
+    return await this.request<ChannelListResponse>({ url, params });
   }
 
   async getPlaylistItems(selectPlaylistDto: SelectPlaylistDto) {
@@ -39,6 +47,6 @@ export class YoutubeService {
       playlistId,
       key: this.configService.get('youtube.apiKey'),
     };
-    return await this.request({ url, params });
+    return await this.request<PlaylistItemListResponse>({ url, params });
   }
 }

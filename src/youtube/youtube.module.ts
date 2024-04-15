@@ -7,5 +7,6 @@ import { YoutubeService } from './youtube.service';
   imports: [HttpModule],
   controllers: [YoutubeController],
   providers: [YoutubeService],
+  exports: [YoutubeService],
 })
 export class YoutubeModule {}
