@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { BestwakkiModule } from './bestwakki/bestwakki.module';
 import { NavercafeModule } from './navercafe/navercafe.module';
+import { MemberModule } from './member/member.module';
 import databaseConfig from './config/database.config';
 
 @Module({
@@ -21,6 +22,7 @@ import databaseConfig from './config/database.config';
     ScheduleModule.forRoot(),
     BestwakkiModule,
     NavercafeModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [],
