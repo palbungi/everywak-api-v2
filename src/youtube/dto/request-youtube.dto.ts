@@ -1,4 +1,5 @@
 export class RequestYoutubeDto {
-  readonly url: string;
+  readonly hostname?: string;
+  readonly pathname: string;
   readonly params: Record<string, string>;
 }
