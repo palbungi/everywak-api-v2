@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { lastValueFrom, map, Observable } from 'rxjs';
+import { Station, StreamInfo } from './afreeca.type';
 import { RequestAfreecaDto } from './dto/request-afreeca.dto';
 
 @Injectable()
@@ -33,5 +34,13 @@ export class AfreecaService {
     const hostname = 'http://bjapi.afreecatv.com';
     const pathname = `/api/${channelId}/station`;
     return await this.request<Station>({ hostname, pathname });
+  }
+
+  async getSteam(channelId: string) {
+    const method = 'POST';
+    const hostname = 'https://live.afreecatv.com';
+    const pathname = `/afreeca/player_live_api.php`;
+    const params = { bjid: channelId };
+    return await this.request<StreamInfo>({ method, hostname, pathname, params });
   }
 }
