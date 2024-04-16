@@ -9,4 +9,9 @@ export class AfreecaController {
   getStation(@Param('channelId') channelId: string) {
     return this.afreecaService.getStation(channelId);
   }
+
+  @Get('/stream/:channelId')
+  getSteam(@Param('channelId') channelId: string) {
+    return this.afreecaService.getSteam(channelId);
+  }
 }
