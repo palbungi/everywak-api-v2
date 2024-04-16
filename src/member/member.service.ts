@@ -260,15 +260,15 @@ export class MemberService {
       },
     );
 
-    await this.updateProfileImageFromYoutube();
+    await this.updateMemberProfileImage();
 
     return await this.findAll();
   }
 
   /**
-   * @description 모든 멤버 프로필 이미지 유튜브 프사 가져오기
+   * @description 모든 멤버 프로필 이미지 갱신하기
    */
-  async updateProfileImageFromYoutube() {
+  async updateMemberProfileImage() {
     const members = await this.findAll();
 
     const youtubeChannel = members
@@ -290,14 +290,29 @@ export class MemberService {
       new SelectChannelDto(youtubeChannel.map((channel) => channel.channelId)),
     );
 
-    //transaction
     this.memberRepository.manager.transaction(
       async (transactionalEntityManager) => {
-        for (const [index, channel] of channels.items.entries()) {
-          const member = members.find(
-            (member) => member.id === youtubeChannel.find((c) => c.channelId === channel.id).memberId,
-          );
-          member.profile.profileImage = channel.snippet.thumbnails.default.url;
+        for (const member of members) {
+          const channel =
+            channels.items[
+              youtubeChannel.findIndex((c) => c.memberId === member.id)
+            ];
+          if (channel) {
+            // 유튜브 채널이 존재할 경우
+            member.profile.profileImage =
+              channel.snippet.thumbnails.default.url;
+          } else if (
+            member.livePlatform.find((platform) => platform.type === 'afreeca')
+          ) {
+            // 아프리카TV 채널이 존재할 경우
+            const afreecaChannel = member.livePlatform.find(
+              (platform) => platform.type === 'afreeca',
+            );
+            member.profile.profileImage = `https://profile.img.afreecatv.com/LOGO/${afreecaChannel.name.slice(0, 2)}/${afreecaChannel.name}/${afreecaChannel.name}.jpg`;
+          } else {
+            // 프로필 이미지가 없을 경우
+            continue
+          }
           await transactionalEntityManager.save(member);
         }
       },
