@@ -311,7 +311,7 @@ export class MemberService {
             member.profile.profileImage = `https://profile.img.afreecatv.com/LOGO/${afreecaChannel.name.slice(0, 2)}/${afreecaChannel.name}/${afreecaChannel.name}.jpg`;
           } else {
             // 프로필 이미지가 없을 경우
-            continue
+            continue;
           }
           await transactionalEntityManager.save(member);
         }
