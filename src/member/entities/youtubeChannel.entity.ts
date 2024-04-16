@@ -8,9 +8,9 @@ export class YoutubeChannel {
     type: 'varchar',
     length: 26,
   })
-  public id: string = ulid();
+  public id: string;
 
-  @Column({
+  @PrimaryColumn({
     type: 'varchar',
     length: 10,
   })

@@ -14,9 +14,9 @@ export class Social {
     type: 'varchar',
     length: 26,
   })
-  public id: string = ulid();
+  public id: string;
 
-  @Column({
+  @PrimaryColumn({
     type: 'varchar',
     length: 12,
   })

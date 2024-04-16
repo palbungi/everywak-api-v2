@@ -122,6 +122,7 @@ export class MemberService {
     const member = await this.findMemberById(createLivePlatformDto.memberId);
 
     const livePlatform = new LivePlatform();
+    livePlatform.id = member.id;
     livePlatform.type = createLivePlatformDto.type;
     livePlatform.name = createLivePlatformDto.name;
     livePlatform.channelId = createLivePlatformDto.channelId;
@@ -144,6 +145,7 @@ export class MemberService {
     const member = await this.findMemberById(createSocialDto.memberId);
 
     const social = new Social();
+    social.id = member.id;
     social.type = createSocialDto.type;
     social.name = createSocialDto.name;
     social.userId = createSocialDto.userId;
@@ -166,6 +168,7 @@ export class MemberService {
     const member = await this.findMemberById(createYoutubeChannelDto.memberId);
 
     const youtubeChannel = new YoutubeChannel();
+    youtubeChannel.id = member.id;
     youtubeChannel.type = createYoutubeChannelDto.type;
     youtubeChannel.name = createYoutubeChannelDto.name;
     youtubeChannel.channelId = createYoutubeChannelDto.channelId;
@@ -200,6 +203,7 @@ export class MemberService {
 
       memberEntity.livePlatform = member.lives.map((platform) => {
         const livePlatformEntity = new LivePlatform();
+        livePlatformEntity.id = member.id;
         livePlatformEntity.type = platform.type;
         livePlatformEntity.name = platform.name;
         livePlatformEntity.channelId = platform.id;
@@ -210,6 +214,7 @@ export class MemberService {
 
       memberEntity.youtubeChannel = member.youtube?.map((channel) => {
         const youtubeChannelEntity = new YoutubeChannel();
+        youtubeChannelEntity.id = member.id;
         youtubeChannelEntity.type = channel.type;
         youtubeChannelEntity.name = channel.name;
         youtubeChannelEntity.channelId = channel.id;
@@ -221,6 +226,7 @@ export class MemberService {
 
       memberEntity.social = member.socials?.map((social) => {
         const socialEntity = new Social();
+        socialEntity.id = member.id;
         socialEntity.type = social.type;
         socialEntity.name = social.name;
         socialEntity.userId = social.id ?? social.name;
