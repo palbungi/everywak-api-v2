@@ -36,7 +36,7 @@ export class AfreecaService {
     return await this.request<Station>({ hostname, pathname });
   }
 
-  async getSteam(channelId: string) {
+  async getStream(channelId: string) {
     const method = 'POST';
     const hostname = 'https://live.afreecatv.com';
     const pathname = `/afreeca/player_live_api.php`;
