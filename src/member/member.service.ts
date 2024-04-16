@@ -260,7 +260,7 @@ export class MemberService {
       },
     );
 
-    await this.updateMemberProfileImage();
+    await this.updateAllMemberProfileImage();
 
     return await this.findAll();
   }
@@ -268,7 +268,7 @@ export class MemberService {
   /**
    * @description 모든 멤버 프로필 이미지 갱신하기
    */
-  async updateMemberProfileImage() {
+  async updateAllMemberProfileImage() {
     const members = await this.findAll();
 
     const youtubeChannel = members
