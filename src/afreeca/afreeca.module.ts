@@ -7,5 +7,6 @@ import { AfreecaService } from './afreeca.service';
   imports: [HttpModule],
   controllers: [AfreecaController],
   providers: [AfreecaService],
+  exports: [AfreecaService],
 })
 export class AfreecaModule {}
