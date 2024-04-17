@@ -22,5 +22,6 @@ import { MemberService } from './member.service';
   ],
   controllers: [MemberController],
   providers: [MemberService],
+  exports: [MemberService],
 })
 export class MemberModule {}
