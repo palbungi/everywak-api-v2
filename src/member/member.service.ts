@@ -296,7 +296,7 @@ export class MemberService {
       new SelectChannelDto(youtubeChannel.map((channel) => channel.channelId)),
     );
 
-    this.memberRepository.manager.transaction(
+    await this.memberRepository.manager.transaction(
       async (transactionalEntityManager) => {
         for (const member of members) {
           const channel =
@@ -324,6 +324,6 @@ export class MemberService {
       },
     );
 
-    return members;
+    return await this.findAll();
   }
 }
