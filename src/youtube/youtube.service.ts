@@ -8,7 +8,11 @@ import { RequestDto } from 'src/fetch/dto/request.dto';
 import { FetchService } from 'src/fetch/fetch.service';
 import { SelectChannelDto } from './dto/select-channel.dto';
 import { SelectPlaylistDto } from './dto/select-playlist.dto';
-import { ChannelListResponse, PlaylistItemListResponse } from './youtube.type';
+import {
+  ChannelListResponse,
+  PlaylistItemListResponse,
+  YoutubeStream,
+} from './youtube.type';
 
 @Injectable()
 export class YoutubeService {
@@ -57,5 +61,33 @@ export class YoutubeService {
         headers: this.headers,
       }),
     );
+  }
+
+  async getStream(channelId: string): Promise<YoutubeStream> {
+    try {
+      const hostname = 'https://www.youtube.com';
+      const pathname = `/channel/${channelId}/live`;
+
+      const response = await this.fetchService.request<string>(
+        new RequestDto({
+          hostname,
+          pathname,
+          headers: this.headers,
+        }),
+      );
+
+      const videoId = response.match(
+        /\<link rel\=\"canonical\" href\=\"https\:\/\/www\.youtube\.com\/watch\?v\=(?<videoId>.{11})\"/,
+      )?.groups?.videoId;
+
+      return {
+        channelId,
+        isLive: !!videoId,
+        videoId: videoId ?? null,
+      };
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('Youtube error');
+    }
   }
 }

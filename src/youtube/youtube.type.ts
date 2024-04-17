@@ -87,3 +87,9 @@ export type PlaylistItemListResponse = {
   pageInfo: { totalResults: number; resultsPerPage: number };
   items: YoutubePlaylistItem[];
 };
+
+export type YoutubeStream = {
+  channelId: string;
+  isLive: boolean;
+  videoId: string | null;
+};
