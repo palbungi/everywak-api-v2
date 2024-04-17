@@ -1,10 +1,10 @@
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { FetchModule } from 'src/fetch/fetch.module';
 import { AfreecaController } from './afreeca.controller';
 import { AfreecaService } from './afreeca.service';
 
 @Module({
-  imports: [HttpModule],
+  imports: [FetchModule],
   controllers: [AfreecaController],
   providers: [AfreecaService],
   exports: [AfreecaService],

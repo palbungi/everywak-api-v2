@@ -1,8 +1,11 @@
-import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { lastValueFrom, map } from 'rxjs';
-import { RequestYoutubeDto } from './dto/request-youtube.dto';
+import { RequestDto } from 'src/fetch/dto/request.dto';
+import { FetchService } from 'src/fetch/fetch.service';
 import { SelectChannelDto } from './dto/select-channel.dto';
 import { SelectPlaylistDto } from './dto/select-playlist.dto';
 import { ChannelListResponse, PlaylistItemListResponse } from './youtube.type';
@@ -12,19 +15,14 @@ export class YoutubeService {
   @Inject(ConfigService)
   private readonly configService: ConfigService;
 
-  @Inject(HttpService)
-  private readonly httpService: HttpService;
+  @Inject(FetchService)
+  private readonly fetchService: FetchService;
 
   private readonly hostname = 'https://www.googleapis.com/youtube/v3';
 
-  async request<T>(dto: RequestYoutubeDto): Promise<T> {
-    const hostname = dto.hostname ?? this.hostname;
-    return await lastValueFrom(
-      this.httpService
-        .get(hostname + dto.pathname, { params: dto.params })
-        .pipe(map((response) => response.data)),
-    );
-  }
+  private readonly headers = {
+    'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36`,
+  };
 
   async getChannels(selectChannelDto: SelectChannelDto) {
     const { channelId, part } = selectChannelDto;
@@ -34,7 +32,13 @@ export class YoutubeService {
       id: channelId.join(','),
       key: this.configService.get('youtube.apiKey'),
     };
-    return await this.request<ChannelListResponse>({ pathname, params });
+    return await this.fetchService.request<ChannelListResponse>(
+      new RequestDto({
+        hostname: this.hostname,
+        pathname,
+        params,
+      }),
+    );
   }
 
   async getPlaylistItems(selectPlaylistDto: SelectPlaylistDto) {
@@ -45,6 +49,13 @@ export class YoutubeService {
       playlistId,
       key: this.configService.get('youtube.apiKey'),
     };
-    return await this.request<PlaylistItemListResponse>({ pathname, params });
+    return await this.fetchService.request<PlaylistItemListResponse>(
+      new RequestDto({
+        hostname: this.hostname,
+        pathname,
+        params,
+        headers: this.headers,
+      }),
+    );
   }
 }

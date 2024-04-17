@@ -1,4 +1,4 @@
-export class RequestAfreecaDto {
+export class RequestDto {
   readonly method?:
     | 'GET'
     | 'POST'
@@ -7,12 +7,13 @@ export class RequestAfreecaDto {
     | 'PATCH'
     | 'HEAD'
     | 'OPTIONS' = 'GET';
-  readonly hostname?: string;
+  readonly hostname: string;
   readonly pathname: string;
   readonly params?: Record<string, string>;
   readonly body?: Record<string, string | number | boolean>;
+  readonly headers?: Record<string, string> = {};
 
-  constructor(partial: Partial<RequestAfreecaDto>) {
+  constructor(partial: Partial<RequestDto>) {
     Object.assign(this, partial);
   }
 }
