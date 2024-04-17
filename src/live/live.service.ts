@@ -30,9 +30,11 @@ export class LiveService {
     });
   }
 
-  findLiveByMemberId(memberId: string) {
+  async findLiveByMemberId(memberId: string) {
+    const member = await this.memberService.findMemberById(memberId);
+
     return this.liveRepository.find({
-      where: { livePlatform: { member: { id: memberId } } },
+      where: { livePlatform: member.livePlatform },
       relations: ['livePlatform'],
     });
   }
@@ -190,6 +192,7 @@ export class LiveService {
 
     const currentLives: Live[] = [];
     currentLives.push(...(await this.getAllMemberAfreecaStream(members)));
+    // TODO: 유튜브 생방송 추가
 
     await this.upsertLives([oldLives, currentLives]);
 
