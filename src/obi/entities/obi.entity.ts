@@ -4,29 +4,29 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 @Entity('OBI')
 export class OBI {
   @PrimaryColumn({ type: 'varchar', length: 26 + 1 + 6 })
-  id: string;
+  public id: string;
 
   @Column({ type: 'varchar', length: 6 })
-  date: string;
+  public date: string;
 
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
-  updatedTimestamp: Date;
+  public updatedTimestamp: Date;
 
   @Column({ type: 'timestamp' })
-  publishedTimestamp: Date;
+  public publishedTimestamp: Date;
 
   @Column({ type: 'varchar', length: 20 })
-  weather: string;
+  public weather: string;
 
   @Column({ type: 'varchar', length: 128 })
-  rawInfo: string;
+  public rawInfo: string;
 
   @Column({ type: 'varchar', length: 192, nullable: true, default: '' })
-  description: string;
+  public description: string;
 
   @ManyToOne(() => Member)
   @JoinColumn([
@@ -35,7 +35,7 @@ export class OBI {
       referencedColumnName: 'id',
     },
   ])
-  member: Member;
+  public member: Member;
 
   constructor(partial: Partial<OBI>) {
     Object.assign(this, partial);
