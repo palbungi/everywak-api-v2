@@ -4,9 +4,7 @@ import { LiveService } from './live.service';
 
 @Controller('live')
 export class LiveController {
-  constructor(
-    private readonly liveService: LiveService,
-  ) {}
+  constructor(private readonly liveService: LiveService) {}
 
   @Get()
   getLiveAll() {
@@ -27,7 +25,7 @@ export class LiveController {
   updateWaktaverseLive() {
     return this.liveService.updateWaktaverseLive();
   }
-  
+
   @Cron('0,15,30,45 * * * * *', {
     name: 'update-lives',
     timeZone: 'Asia/Seoul',
