@@ -8,11 +8,14 @@ import { RequestDto } from 'src/fetch/dto/request.dto';
 import { FetchService } from 'src/fetch/fetch.service';
 import { SelectChannelDto } from './dto/select-channel.dto';
 import { SelectPlaylistDto } from './dto/select-playlist.dto';
+import { SelectVideoDto } from './dto/select-video.dto';
 import {
   ChannelListResponse,
   PlaylistItemListResponse,
+  VideoListResponse,
   YoutubePlaylistItem,
   YoutubeStream,
+  YoutubeVideo,
 } from './youtube.type';
 
 @Injectable()
@@ -28,6 +31,30 @@ export class YoutubeService {
   private readonly headers = {
     'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36`,
   };
+
+  /**
+   * @description ISO 8601에 따라 정의된 유튜브식 duration을 정수로 변환합니다.
+   */
+  convertYTDurationToInteger(duration: string): number {
+    if (duration == 'P0D') {
+      return 0;
+    }
+    const [orig, hour, min, sec] = duration.match(
+      /^PT(?:(\d+\.*\d*)H)?(?:(\d+\.*\d*)M)?(?:(\d+\.*\d*)S)?$/,
+    );
+
+    let result = 0;
+    if (!isNaN(parseFloat(hour))) {
+      result += parseFloat(hour) * 3600;
+    }
+    if (!isNaN(parseFloat(min))) {
+      result += parseFloat(min) * 60;
+    }
+    if (!isNaN(parseFloat(sec))) {
+      result += parseFloat(sec);
+    }
+    return result;
+  }
 
   async getChannels(selectChannelDto: SelectChannelDto) {
     const { channelId, part } = selectChannelDto;
@@ -93,6 +120,36 @@ export class YoutubeService {
       } while (pageToken);
       return result;
     }
+  }
+
+  async getVideos(selectVideoDto: SelectVideoDto) {
+    const { videoIds, part } = selectVideoDto;
+    const pathname = `/videos`;
+
+    const result: YoutubeVideo[] = [];
+
+    while (videoIds.length > 0) {
+      const partedIds = videoIds.splice(0, 50);
+      const params = {
+        part: part.join(','),
+        id: partedIds.join(','),
+        key: this.configService.get('youtube.apiKey'),
+      };
+
+      const response = await this.fetchService.request<VideoListResponse>(
+        new RequestDto({
+          hostname: this.hostname,
+          pathname,
+          params,
+          headers: this.headers,
+        }),
+      );
+
+      if (response.items && response.items.length > 0) {
+        result.push(...response.items);
+      }
+    }
+    return result;
   }
 
   async getStream(channelId: string): Promise<YoutubeStream> {
