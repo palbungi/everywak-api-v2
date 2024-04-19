@@ -46,21 +46,53 @@ export class YoutubeService {
   }
 
   async getPlaylistItems(selectPlaylistDto: SelectPlaylistDto) {
-    const { playlistId, part } = selectPlaylistDto;
+    const { playlistId, part, selectAll } = selectPlaylistDto;
     const pathname = `/playlistItems`;
-    const params = {
-      part: part.join(','),
-      playlistId,
-      key: this.configService.get('youtube.apiKey'),
-    };
-    return await this.fetchService.request<PlaylistItemListResponse>(
-      new RequestDto({
-        hostname: this.hostname,
-        pathname,
-        params,
-        headers: this.headers,
-      }),
-    );
+    if (!selectAll) {
+      const params = {
+        part: part.join(','),
+        playlistId,
+        key: this.configService.get('youtube.apiKey'),
+      };
+      return [
+        await this.fetchService.request<PlaylistItemListResponse>(
+          new RequestDto({
+            hostname: this.hostname,
+            pathname,
+            params,
+            headers: this.headers,
+          }),
+        ),
+      ];
+    } else {
+      const result: PlaylistItemListResponse[] = [];
+      let pageToken: string | undefined;
+      do {
+        const params = {
+          part: part.join(','),
+          playlistId,
+          key: this.configService.get('youtube.apiKey'),
+          pageToken,
+          order: 'date',
+          maxResults: '50',
+        };
+        const response =
+          await this.fetchService.request<PlaylistItemListResponse>(
+            new RequestDto({
+              hostname: this.hostname,
+              pathname,
+              params,
+              headers: this.headers,
+            }),
+          );
+        result.push(response);
+        pageToken = response.nextPageToken;
+        if (result.length > 3) {
+          break;
+        }
+      } while (pageToken);
+      return result;
+    }
   }
 
   async getStream(channelId: string): Promise<YoutubeStream> {
