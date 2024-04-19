@@ -12,6 +12,7 @@ import { YoutubeModule } from './youtube/youtube.module';
 import { AfreecaModule } from './afreeca/afreeca.module';
 import { FetchModule } from './fetch/fetch.module';
 import { ObiModule } from './obi/obi.module';
+import { VideoModule } from './video/video.module';
 import databaseConfig from './config/database.config';
 import youtubeConfig from './config/youtube.config';
 
@@ -38,6 +39,7 @@ import youtubeConfig from './config/youtube.config';
     AfreecaModule,
     FetchModule,
     ObiModule,
+    VideoModule,
   ],
   controllers: [AppController],
   providers: [],
