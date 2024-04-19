@@ -158,7 +158,7 @@ export const Waktaverse: Member[] = [
         name: '데숙',
         type: 'clip',
         id: 'UCmHltryGykfakS-JmaxrNBg',
-        uploads: 'UCmHltryGykfakS-JmaxrNBg',
+        uploads: 'UUmHltryGykfakS-JmaxrNBg',
       },
       {
         name: '다시보기',
