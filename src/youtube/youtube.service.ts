@@ -76,12 +76,14 @@ export class YoutubeService {
   async getPlaylistItems(selectPlaylistDto: SelectPlaylistDto) {
     const { playlistId, part, selectAll } = selectPlaylistDto;
     const pathname = `/playlistItems`;
+    const params = {
+      part: part.join(','),
+      playlistId,
+      key: this.configService.get('youtube.apiKey'),
+      order: 'date',
+      maxResults: '50',
+    };
     if (!selectAll) {
-      const params = {
-        part: part.join(','),
-        playlistId,
-        key: this.configService.get('youtube.apiKey'),
-      };
       const response =
         await this.fetchService.request<PlaylistItemListResponse>(
           new RequestDto({
@@ -96,20 +98,15 @@ export class YoutubeService {
       const result: YoutubePlaylistItem[] = [];
       let pageToken: string | undefined;
       do {
-        const params = {
-          part: part.join(','),
-          playlistId,
-          key: this.configService.get('youtube.apiKey'),
-          pageToken: pageToken ?? '',
-          order: 'date',
-          maxResults: '50',
-        };
         const response =
           await this.fetchService.request<PlaylistItemListResponse>(
             new RequestDto({
               hostname: this.hostname,
               pathname,
-              params,
+              params: {
+                ...params,
+                pageToken: pageToken ?? '',
+              },
               headers: this.headers,
             }),
           );
