@@ -11,6 +11,7 @@ import { SelectPlaylistDto } from './dto/select-playlist.dto';
 import {
   ChannelListResponse,
   PlaylistItemListResponse,
+  YoutubePlaylistItem,
   YoutubeStream,
 } from './youtube.type';
 
@@ -54,7 +55,7 @@ export class YoutubeService {
         playlistId,
         key: this.configService.get('youtube.apiKey'),
       };
-      return [
+      const response =
         await this.fetchService.request<PlaylistItemListResponse>(
           new RequestDto({
             hostname: this.hostname,
@@ -62,10 +63,10 @@ export class YoutubeService {
             params,
             headers: this.headers,
           }),
-        ),
-      ];
+        );
+      return response.items;
     } else {
-      const result: PlaylistItemListResponse[] = [];
+      const result: YoutubePlaylistItem[] = [];
       let pageToken: string | undefined;
       do {
         const params = {
@@ -85,7 +86,7 @@ export class YoutubeService {
               headers: this.headers,
             }),
           );
-        result.push(response);
+        result.push(...response.items);
         pageToken = response.nextPageToken;
         if (result.length > 3) {
           break;
