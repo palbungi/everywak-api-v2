@@ -1,6 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Waktaverse } from 'src/constants/waktaverse';
+import { LiveChange } from 'src/live/entities/live-change.entity';
+import { Live } from 'src/live/entities/live.entity';
+import { OBI } from 'src/obi/entities/obi.entity';
 import { SelectChannelDto } from 'src/youtube/dto/select-channel.dto';
 import { YoutubeService } from 'src/youtube/youtube.service';
 import { Repository } from 'typeorm';
@@ -84,6 +87,9 @@ export class MemberService {
   dropMemberAll() {
     return this.memberRepository.manager.transaction(
       async (transactionalEntityManager) => {
+        await transactionalEntityManager.delete(LiveChange, {});
+        await transactionalEntityManager.delete(Live, {});
+        await transactionalEntityManager.delete(OBI, {});
         await transactionalEntityManager.delete(LivePlatform, {});
         await transactionalEntityManager.delete(YoutubeChannel, {});
         await transactionalEntityManager.delete(Social, {});
