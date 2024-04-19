@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class SelectPlaylistDto {
   @IsString()
@@ -6,4 +6,12 @@ export class SelectPlaylistDto {
 
   @IsString({ each: true })
   readonly part: string[] = ['snippet'];
+
+  @IsOptional()
+  @IsInt()
+  readonly selectAll: boolean = true;
+
+  constructor(partial: Partial<SelectPlaylistDto>) {
+    Object.assign(this, partial);
+  }
 }
