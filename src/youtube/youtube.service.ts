@@ -73,7 +73,7 @@ export class YoutubeService {
           part: part.join(','),
           playlistId,
           key: this.configService.get('youtube.apiKey'),
-          pageToken,
+          pageToken: pageToken ?? '',
           order: 'date',
           maxResults: '50',
         };
@@ -86,11 +86,10 @@ export class YoutubeService {
               headers: this.headers,
             }),
           );
-        result.push(...response.items);
-        pageToken = response.nextPageToken;
-        if (result.length > 3) {
-          break;
+        if (response.items && response.items.length > 0) {
+          result.push(...response.items);
         }
+        pageToken = response.nextPageToken;
       } while (pageToken);
       return result;
     }
