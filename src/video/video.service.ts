@@ -8,12 +8,15 @@ import { YoutubeService } from 'src/youtube/youtube.service';
 import { YoutubeVideo } from 'src/youtube/youtube.type';
 import { FindOptionsOrder, ILike, Repository } from 'typeorm';
 import { OrderBy, SearchVideoDto } from './dto/search-video.dto';
+import { VideoViewCount } from './entities/video-view-count.entity';
 import { Video } from './entities/video.entity';
 
 @Injectable()
 export class VideoService {
   @InjectRepository(Video)
   private readonly videoRepository: Repository<Video>;
+  @InjectRepository(VideoViewCount)
+  private readonly videoViewCountRepository: Repository<VideoViewCount>;
   @Inject(MemberService)
   private readonly memberService: MemberService;
   @Inject(YoutubeService)
@@ -57,7 +60,7 @@ export class VideoService {
     return youtubeChannels;
   }
 
-  async getYoutubeVideos(members: Member[]) {
+  async getYoutubeVideos(members: Member[], selectAll: boolean = true) {
     const youtubeChannels = await this.getYoutubeChannels(members);
 
     const result: YoutubeVideo[] = [];
@@ -65,7 +68,7 @@ export class VideoService {
       const playlistItems = await this.youtubeService.getPlaylistItems(
         new SelectPlaylistDto({
           playlistId: youtubeChannel.uploads,
-          selectAll: true,
+          selectAll,
         }),
       );
       console.log(
@@ -85,9 +88,42 @@ export class VideoService {
     return result;
   }
 
-  async updateVideos() {
+  generateDateHourString(date: Date) {
+    const year = date.getFullYear() % 100;
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+
+    return `${year * 1000000 + month * 10000 + day * 100 + hour}`;
+  }
+
+  async saveViewCount() {
+    const videos = await this.videoRepository.find();
+
+    const now = new Date();
+    const dateHourString = this.generateDateHourString(now);
+    const videoViewCounts = videos.map((video) => {
+      return new VideoViewCount({
+        id: `${dateHourString}:${video.videoId}`,
+        video,
+        time: parseInt(dateHourString),
+        viewCount: video.viewCount,
+      });
+    });
+
+    await this.videoViewCountRepository.manager.transaction(async (manager) => {
+      while (videoViewCounts.length > 0) {
+        const videoViewCountsChunk = videoViewCounts.splice(0, 1000);
+        await manager.upsert(VideoViewCount, videoViewCountsChunk, ['id']);
+      }
+    });
+
+    return 200;
+  }
+
+  async updateVideos(fastUpdate: boolean = false) {
     const members = await this.memberService.findAll();
-    const youtubeVideos = await this.getYoutubeVideos(members);
+    const youtubeVideos = await this.getYoutubeVideos(members, !fastUpdate);
 
     const videos = youtubeVideos.map((video) => {
       const member = members.find((member) =>
@@ -125,6 +161,7 @@ export class VideoService {
         await manager.upsert(Video, videosChunk, ['videoId']);
       }
     });
+    await this.saveViewCount();
 
     return videos.length;
   }

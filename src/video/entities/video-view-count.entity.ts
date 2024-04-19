@@ -1,6 +1,7 @@
-import { Column, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Video } from './video.entity';
 
+@Entity()
 export class VideoViewCount {
   @PrimaryColumn({
     type: 'varchar',
@@ -14,7 +15,6 @@ export class VideoViewCount {
 
   @Column({
     type: 'int',
-    length: 8,
   })
   public time: number;
 
@@ -22,4 +22,8 @@ export class VideoViewCount {
     type: 'int',
   })
   public viewCount: number;
+
+  constructor(partial: Partial<VideoViewCount>) {
+    Object.assign(this, partial);
+  }
 }
