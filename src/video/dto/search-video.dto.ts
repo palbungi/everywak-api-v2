@@ -1,5 +1,5 @@
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
 
 export type ReadonlyRecord<P extends string = string, Q = P> = Readonly<
   Record<P, Q>
@@ -17,10 +17,22 @@ export class SearchVideoDto {
   @IsString()
   @Length(26, 26)
   public readonly memberId: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 10)
+  public readonly channelType: string;
   
   @IsOptional()
   @IsString()
   public readonly keyword: string = '';
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform((value) => {
+    return value.value == 'true' ? true : false;
+  })
+  public readonly isShorts: boolean;
 
   @IsOptional()
   @Type(() => Number)

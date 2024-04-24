@@ -6,7 +6,7 @@ import { SelectPlaylistDto } from 'src/youtube/dto/select-playlist.dto';
 import { SelectVideoDto } from 'src/youtube/dto/select-video.dto';
 import { YoutubeService } from 'src/youtube/youtube.service';
 import { YoutubeVideo } from 'src/youtube/youtube.type';
-import { FindOptionsOrder, ILike, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { OrderBy, SearchVideoDto } from './dto/search-video.dto';
 import { VideoViewCount } from './entities/video-view-count.entity';
 import { Video } from './entities/video.entity';
@@ -29,27 +29,30 @@ export class VideoService {
       view: { viewCount: 'DESC' },
     };
 
+    const where: FindOptionsWhere<Video> = {
+      title: ILike(`%${searchVideoDto.keyword}%`),
+      ...(searchVideoDto.memberId ? {'member.id' : searchVideoDto.memberId} : {}),
+      ...(searchVideoDto.channelType ? {'channel.type' : searchVideoDto.channelType} : {}),
+      isShorts: searchVideoDto.isShorts,
+    };
+
     // TODO: startAt, endAt 구현
-    // TODO: isShorts 구현
 
     return this.videoRepository.find({
       select: [
         'videoId',
         'publishedTimestamp',
         'title',
-        'member',
-        'channel',
         'thumbnails',
         'viewCount',
         'duration',
         'isShorts',
       ],
-      where: {
-        title: ILike(`%${searchVideoDto.keyword}%`),
-      },
+      where,
       order: orderBy[searchVideoDto.orderBy],
       take: searchVideoDto.perPage,
       skip: (searchVideoDto.page - 1) * searchVideoDto.perPage,
+      relations: ['member', 'channel'],
     });
   }
 
