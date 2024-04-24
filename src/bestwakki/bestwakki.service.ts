@@ -43,6 +43,7 @@ export class BestwakkiService {
       up: { upCount: 'DESC' },
       comment: { commentCount: 'DESC' },
     };
+    // TODO: startAt, endAt 구현
 
     return this.popularArticleRepository.find({
       select: [
