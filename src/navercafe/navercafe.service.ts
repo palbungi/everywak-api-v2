@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { catchError, lastValueFrom, map } from 'rxjs';
-import { ArticleListDto } from './dto/article-list.dto';
+import { ArticleListDto, ArticleListItem } from './dto/article-list.dto';
 import { ArticleDto } from './dto/article.dto';
 import { NaverCafeError } from './dto/error.dto';
 import { MenuDto } from './dto/menu.dto';
@@ -70,6 +70,29 @@ export class NavercafeService {
         })
         .pipe(map((res) => res.data.message.result)),
     );
+  }
+
+  async getAllArticleList(menuId: number): Promise<ArticleListItem[]> {
+    const result: ArticleListItem[] = [];
+
+    let lastArticleId = 0;
+    while (true) {
+      const articleListResponse = await this.getArticleList(
+        new SelectArticleListDto({
+          menuId,
+          lastArticleId,
+          perPage: 50,
+        }),
+      );
+      console.log(articleListResponse.articleList.length)
+      if (articleListResponse.articleList.length === 0) {
+        break;
+      }
+      result.push(...articleListResponse.articleList);
+      lastArticleId = articleListResponse.articleList.slice(-1)[0].articleId;
+    }
+
+    return result;
   }
 
   getArticle(articleId: string): Promise<ArticleDto> {

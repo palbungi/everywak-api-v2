@@ -56,6 +56,9 @@ export type ArticleListItem = {
   attachLink: boolean;
   attachCalendar: boolean;
   popular: boolean;
+  representImage?: string;
+  representImageType?: string;
+  imageAttachCount?: number;
   useHead: boolean;
   headId: number;
   headName: string;
