@@ -1,5 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { catchError, lastValueFrom, map } from 'rxjs';
 import { ArticleListDto } from './dto/article-list.dto';
@@ -46,14 +50,22 @@ export class NavercafeService {
   getArticleList(
     selectArticleListDto: SelectArticleListDto,
   ): Promise<ArticleListDto> {
+    const pagination = selectArticleListDto.lastArticleId
+      ? {
+          'search.queryType': 'lastArticle',
+          'search.pageLastArticleId': selectArticleListDto.lastArticleId,
+        }
+      : {
+          'search.page': selectArticleListDto.page,
+        };
     return lastValueFrom(
       this.httpService
         .get('https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json', {
           params: {
             'search.clubid': 27842958,
             'search.menuid': selectArticleListDto.menuId,
-            'search.page': selectArticleListDto.page,
             'search.perPage': selectArticleListDto.perPage,
+            ...pagination,
           },
         })
         .pipe(map((res) => res.data.message.result)),
@@ -74,21 +86,30 @@ export class NavercafeService {
           },
         )
         .pipe(map((res) => res.data.result))
-        .pipe(catchError((err) => { 
-          if (err.isAxiosError) {
-            const axiosError = err as AxiosError<NaverCafeError>;
-            if (axiosError.response.status === 401) {
-              throw new UnauthorizedException('로그인이 필요한 게시물입니다.');
+        .pipe(
+          catchError((err) => {
+            if (err.isAxiosError) {
+              const axiosError = err as AxiosError<NaverCafeError>;
+              if (axiosError.response.status === 401) {
+                throw new UnauthorizedException(
+                  '로그인이 필요한 게시물입니다.',
+                );
+              }
+              const { errorCode, reason, message } =
+                axiosError.response.data.result;
+              if (!errorCode) {
+                throw new InternalServerErrorException(
+                  '알 수 없는 오류가 발생했습니다.',
+                );
+              }
+              throw new InternalServerErrorException(
+                `${errorCode}: ${message}`,
+              );
             }
-            const { errorCode, reason, message } = axiosError.response.data.result;
-            if (!errorCode) {
-              throw new InternalServerErrorException('알 수 없는 오류가 발생했습니다.');
-            }
-            throw new InternalServerErrorException(`${errorCode}: ${message}`);
-          }
-          console.log(err);
-          throw err;
-         })),
+            console.log(err);
+            throw err;
+          }),
+        ),
     );
   }
 }
