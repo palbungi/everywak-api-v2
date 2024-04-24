@@ -11,9 +11,17 @@ import {
 
 @Entity()
 export class Video {
+  @PrimaryColumn({
+    type: 'varchar',
+    length: 128,
+  })
+  public videoId: string;
+
   @UpdateDateColumn({
     type: 'timestamp',
     precision: 3,
+    default: () => 'CURRENT_TIMESTAMP(3)',
+    onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
   public updatedTimestamp: Date;
 
@@ -22,12 +30,6 @@ export class Video {
     precision: 3,
   })
   public publishedTimestamp: Date;
-
-  @PrimaryColumn({
-    type: 'varchar',
-    length: 128,
-  })
-  public videoId: string;
 
   @Column({
     type: 'varchar',
