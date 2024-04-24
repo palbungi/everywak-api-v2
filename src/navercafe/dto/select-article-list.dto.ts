@@ -15,6 +15,11 @@ export class SelectArticleListDto {
   @IsOptional()
   @IsInt()
   @Type(() => Number)
+  readonly lastArticleId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
   @Min(1)
   @Max(50)
   readonly perPage?: number = 50;
