@@ -10,10 +10,10 @@ import { MemberService } from './member.service';
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
 
-  // @Get('/setup')
-  // setupMember() {
-  //   return this.memberService.insertWaktaverseMembers();
-  // }
+  @Get('/setup')
+  setupMember() {
+    return this.memberService.insertWaktaverseMembers();
+  }
 
   @Get('/list')
   listMember() {
