@@ -10,7 +10,7 @@ export class VideoController {
 
   @Get('list')
   list(@Query() searchVideoDto: SearchVideoDto) {
-    return this.videoService.findVideos(searchVideoDto);
+    return this.videoService.find(searchVideoDto);
   }
 
   @Get('update')

@@ -23,7 +23,7 @@ export class VideoService {
   @Inject(YoutubeService)
   private readonly youtubeService: YoutubeService;
 
-  async findVideos(searchVideoDto: SearchVideoDto) {
+  async find(searchVideoDto: SearchVideoDto) {
     const orderBy: Record<OrderBy, FindOptionsOrder<Video>> = {
       time: { publishedTimestamp: 'DESC' },
       time_oldest: { publishedTimestamp: 'ASC' },
@@ -55,6 +55,10 @@ export class VideoService {
       skip: (searchVideoDto.page - 1) * searchVideoDto.perPage,
       relations: ['member', 'channel'],
     });
+  }
+
+  findAllViewCount() {
+    return this.videoViewCountRepository.find();
   }
 
   async getYoutubeChannels(members: Member[]) {
