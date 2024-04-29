@@ -1,6 +1,7 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NavercafeService } from 'src/navercafe/navercafe.service';
+import { generateDateHourString } from 'src/util/functions';
 import {
   FindOptionsOrder,
   FindOptionsWhere,
@@ -260,20 +261,11 @@ export class WaktoonService {
     });
   }
 
-  generateDateHourString(date: Date) {
-    const year = date.getFullYear() % 100;
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-
-    return `${year * 1000000 + month * 10000 + day * 100 + hour}`;
-  }
-
   async saveEpisodePopularity() {
     const episodes = await this.findAllEpisodes();
 
     const now = new Date();
-    const dateHourString = this.generateDateHourString(now);
+    const dateHourString = generateDateHourString(now);
     const episodePopularities = episodes.map((episode) => {
       return new WaktoonEpisodePopularity({
         id: `${dateHourString}:${episode.id}`,
@@ -421,8 +413,8 @@ export class WaktoonService {
     now: Date,
   ) {
     const [dateFrom, dateTo] = this.getDateFromDuration(duration, now);
-    const before = parseInt(this.generateDateHourString(dateFrom));
-    const after = parseInt(this.generateDateHourString(dateTo));
+    const before = parseInt(generateDateHourString(dateFrom));
+    const after = parseInt(generateDateHourString(dateTo));
 
     const beforeEpisodes: Record<string, WaktoonEpisodePopularity> = {};
     const afterEpisodes: Record<string, WaktoonEpisodePopularity> = {};
@@ -470,7 +462,7 @@ export class WaktoonService {
     const now = new Date();
     const popularity = await this.waktoonEpisodePopularityRepository.find({
       where: {
-        time: LessThanOrEqual(parseInt(this.generateDateHourString(now))),
+        time: LessThanOrEqual(parseInt(generateDateHourString(now))),
       },
       relations: ['episode'],
     });

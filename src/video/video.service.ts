@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { MemberService } from 'src/member/member.service';
+import { generateDateHourString } from 'src/util/functions';
 import { SelectPlaylistDto } from 'src/youtube/dto/select-playlist.dto';
 import { SelectVideoDto } from 'src/youtube/dto/select-video.dto';
 import { YoutubeService } from 'src/youtube/youtube.service';
@@ -91,20 +92,11 @@ export class VideoService {
     return result;
   }
 
-  generateDateHourString(date: Date) {
-    const year = date.getFullYear() % 100;
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-
-    return `${year * 1000000 + month * 10000 + day * 100 + hour}`;
-  }
-
   async saveViewCount() {
     const videos = await this.videoRepository.find();
 
     const now = new Date();
-    const dateHourString = this.generateDateHourString(now);
+    const dateHourString = generateDateHourString(now);
     const videoViewCounts = videos.map((video) => {
       return new VideoViewCount({
         id: `${dateHourString}:${video.videoId}`,
