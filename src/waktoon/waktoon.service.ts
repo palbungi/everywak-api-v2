@@ -270,7 +270,7 @@ export class WaktoonService {
       return new WaktoonEpisodePopularity({
         id: `${dateHourString}:${episode.id}`,
         episode,
-        time: parseInt(dateHourString),
+        time: dateHourString,
         readCount: episode.article.readCount,
         commentCount: episode.article.commentCount,
         upCount: episode.article.upCount,
@@ -413,8 +413,8 @@ export class WaktoonService {
     now: Date,
   ) {
     const [dateFrom, dateTo] = this.getDateFromDuration(duration, now);
-    const before = parseInt(generateDateHourString(dateFrom));
-    const after = parseInt(generateDateHourString(dateTo));
+    const before = generateDateHourString(dateFrom);
+    const after = generateDateHourString(dateTo);
 
     const beforeEpisodes: Record<string, WaktoonEpisodePopularity> = {};
     const afterEpisodes: Record<string, WaktoonEpisodePopularity> = {};
@@ -462,7 +462,7 @@ export class WaktoonService {
     const now = new Date();
     const popularity = await this.waktoonEpisodePopularityRepository.find({
       where: {
-        time: LessThanOrEqual(parseInt(generateDateHourString(now))),
+        time: LessThanOrEqual(generateDateHourString(now)),
       },
       relations: ['episode'],
     });

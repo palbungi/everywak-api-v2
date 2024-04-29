@@ -4,5 +4,5 @@ export function generateDateHourString(date: Date) {
   const day = date.getDate();
   const hour = date.getHours();
 
-  return `${year * 1000000 + month * 10000 + day * 100 + hour}`;
+  return parseInt(`${year * 1000000 + month * 10000 + day * 100 + hour}`);
 }

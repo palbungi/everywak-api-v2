@@ -123,7 +123,7 @@ export class VideoService {
       return new VideoViewCount({
         id: `${dateHourString}:${video.videoId}`,
         video,
-        time: parseInt(dateHourString),
+        time: dateHourString,
         viewCount: video.viewCount,
       });
     });
