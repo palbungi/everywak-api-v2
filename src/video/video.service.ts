@@ -11,7 +11,7 @@ import {
   FindOptionsOrder,
   FindOptionsWhere,
   ILike,
-  LessThan,
+  LessThanOrEqual,
   Repository,
 } from 'typeorm';
 import { OrderBy, SearchVideoDto } from './dto/search-video.dto';
@@ -74,7 +74,7 @@ export class VideoService {
   findViewCount({ endAt }: { endAt: number }) {
     return this.videoViewCountRepository.find({
       where: {
-        time: LessThan(endAt),
+        time: LessThanOrEqual(endAt),
       },
     });
   }
