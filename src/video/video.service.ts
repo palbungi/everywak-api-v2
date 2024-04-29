@@ -7,7 +7,13 @@ import { SelectPlaylistDto } from 'src/youtube/dto/select-playlist.dto';
 import { SelectVideoDto } from 'src/youtube/dto/select-video.dto';
 import { YoutubeService } from 'src/youtube/youtube.service';
 import { YoutubeVideo } from 'src/youtube/youtube.type';
-import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
+import {
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  LessThan,
+  Repository,
+} from 'typeorm';
 import { OrderBy, SearchVideoDto } from './dto/search-video.dto';
 import { VideoViewCount } from './entities/video-view-count.entity';
 import { Video } from './entities/video.entity';
@@ -32,8 +38,12 @@ export class VideoService {
 
     const where: FindOptionsWhere<Video> = {
       title: ILike(`%${searchVideoDto.keyword}%`),
-      ...(searchVideoDto.memberId ? {'member.id' : searchVideoDto.memberId} : {}),
-      ...(searchVideoDto.channelType ? {'channel.type' : searchVideoDto.channelType} : {}),
+      ...(searchVideoDto.memberId
+        ? { 'member.id': searchVideoDto.memberId }
+        : {}),
+      ...(searchVideoDto.channelType
+        ? { 'channel.type': searchVideoDto.channelType }
+        : {}),
       isShorts: searchVideoDto.isShorts,
     };
 
@@ -59,6 +69,14 @@ export class VideoService {
 
   findAllViewCount() {
     return this.videoViewCountRepository.find();
+  }
+
+  findViewCount({ endAt }: { endAt: number }) {
+    return this.videoViewCountRepository.find({
+      where: {
+        time: LessThan(endAt),
+      },
+    });
   }
 
   async getYoutubeChannels(members: Member[]) {
