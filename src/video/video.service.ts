@@ -76,6 +76,7 @@ export class VideoService {
       where: {
         time: LessThanOrEqual(endAt),
       },
+      relations: ['video'],
     });
   }
 
