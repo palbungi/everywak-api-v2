@@ -6,7 +6,7 @@ import {
   FindOptionsWhere,
   ILike,
   In,
-  LessThan,
+  LessThanOrEqual,
   Repository,
 } from 'typeorm';
 import { InsertSeriesDto } from './dto/insert-series.dto';
@@ -15,6 +15,7 @@ import {
   SearchAuthorDto,
 } from './dto/search-author.dto';
 import {
+  Duration,
   OrderBy as EpisodeChartOrderBy,
   SearchEpisodeChartDto,
 } from './dto/search-episode-chart.dto';
@@ -28,9 +29,9 @@ import {
   SearchTarget as SeriesSearchTarget,
   SearchSeriesDto,
 } from './dto/search-series.dto';
-import { WaktoonEpisodeChartItem } from './dto/waktoon-episode-chart-item.dto';
 import { WaktoonArticle } from './entities/waktoon-article.entity';
 import { WaktoonAuthor } from './entities/waktoon-author.entity';
+import { WaktoonEpisodeChart } from './entities/waktoon-episode-chart.entity';
 import { WaktoonEpisodePopularity } from './entities/waktoon-episode-popularity.entity';
 import { WaktoonEpisode } from './entities/waktoon-episode.entity';
 import { WaktoonSeries } from './entities/waktoon-series.entity';
@@ -59,6 +60,9 @@ export class WaktoonService {
   @InjectRepository(WaktoonEpisodePopularity)
   private readonly waktoonEpisodePopularityRepository: Repository<WaktoonEpisodePopularity>;
 
+  @InjectRepository(WaktoonEpisodeChart)
+  private readonly waktoonEpisodeChartRepository: Repository<WaktoonEpisodeChart>;
+
   findAllArticles() {
     return this.waktoonArticleRepository.find({
       relations: ['member'],
@@ -86,70 +90,25 @@ export class WaktoonService {
   }
 
   async getEpisodeChart(dto: SearchEpisodeChartDto) {
-    const before = parseInt(this.generateDateHourString(new Date(dto.beginAt)));
-    const after = parseInt(this.generateDateHourString(new Date(dto.endAt)));
+    const orderBy: Record<
+      EpisodeChartOrderBy,
+      FindOptionsOrder<WaktoonEpisodeChart>
+    > = {
+      read: { increasedReadCount: 'DESC' },
+      comment: { increasedCommentCount: 'DESC' },
+      up: { increasedUpCount: 'DESC' },
+    };
 
-    const popularity = await this.waktoonEpisodePopularityRepository.find({
+    const chart = await this.waktoonEpisodeChartRepository.find({
       where: {
-        time: LessThan(after),
+        duration: dto.duration,
       },
-      relations: ['episode'],
+      order: orderBy[dto.orderBy],
+      take: dto.perPage,
+      skip: (dto.page - 1) * dto.perPage,
+      relations: ['episode', 'episode.article'],
     });
-
-    const beforeEpisodes: Record<string, WaktoonEpisodePopularity> = {};
-    const afterEpisodes: Record<string, WaktoonEpisodePopularity> = {};
-
-    popularity.forEach((p) => {
-      if (
-        p.time <= before &&
-        (!beforeEpisodes[p.episode.id] ||
-          beforeEpisodes[p.episode.id].time < p.time)
-      ) {
-        beforeEpisodes[p.episode.id] = p;
-      }
-      if (
-        p.time <= after &&
-        (!afterEpisodes[p.episode.id] ||
-          afterEpisodes[p.episode.id].time < p.time)
-      ) {
-        afterEpisodes[p.episode.id] = p;
-      }
-    });
-
-    const chart: WaktoonEpisodeChartItem[] = [];
-
-    Object.entries(afterEpisodes).forEach(([id, afterEpisode]) => {
-      const beforeEpisode = beforeEpisodes[id];
-      if (!beforeEpisode) {
-        return;
-      }
-      const diff = {
-        diffReadCount: afterEpisode.readCount - beforeEpisode.readCount,
-        diffCommentCount:
-          afterEpisode.commentCount - beforeEpisode.commentCount,
-        diffUpCount: afterEpisode.upCount - beforeEpisode.upCount,
-      };
-      chart.push(
-        new WaktoonEpisodeChartItem({
-          ...afterEpisode,
-          ...diff,
-        }),
-      );
-    });
-
-    switch (dto.orderBy) {
-      case 'read':
-        chart.sort((a, b) => b.diffReadCount - a.diffReadCount);
-        break;
-      case 'comment':
-        chart.sort((a, b) => b.diffCommentCount - a.diffCommentCount);
-        break;
-      case 'up':
-        chart.sort((a, b) => b.diffUpCount - a.diffUpCount);
-        break;
-    }
-
-    return chart.slice((dto.page - 1) * dto.perPage, dto.page * dto.perPage);
+    return chart;
   }
 
   async findEpisodes(dto: SearchEpisodeDto) {
@@ -428,6 +387,146 @@ export class WaktoonService {
     return await this.waktoonEpisodeRepository.save(newEpisodes);
   }
 
+  getDateFromDuration(duration: Duration, now: Date): [Date, Date] {
+    const before = new Date(now);
+    const after = new Date(now);
+    switch (duration) {
+      case 'hourly':
+        before.setHours(before.getHours() - 1);
+        break;
+      case '24hours':
+        before.setHours(before.getHours() - 24);
+        break;
+      case 'daily':
+        before.setDate(before.getDate() - 1);
+        before.setHours(0);
+        after.setHours(0);
+        break;
+      case 'weekly':
+        after.setDate(after.getDate() - after.getDay());
+        before.setDate(after.getDate() - 7);
+        break;
+      case 'monthly':
+        before.setMonth(before.getMonth() - 1);
+        before.setDate(1);
+        after.setDate(1);
+        break;
+    }
+    return [before, after];
+  }
+
+  async generateEpisodeChart(
+    popularity: WaktoonEpisodePopularity[],
+    duration: Duration,
+    now: Date,
+  ) {
+    const [dateFrom, dateTo] = this.getDateFromDuration(duration, now);
+    const before = parseInt(this.generateDateHourString(dateFrom));
+    const after = parseInt(this.generateDateHourString(dateTo));
+
+    const beforeEpisodes: Record<string, WaktoonEpisodePopularity> = {};
+    const afterEpisodes: Record<string, WaktoonEpisodePopularity> = {};
+
+    popularity.forEach((p) => {
+      if (
+        p.time <= before &&
+        (!beforeEpisodes[p.episode.id] ||
+          beforeEpisodes[p.episode.id].time < p.time)
+      ) {
+        beforeEpisodes[p.episode.id] = p;
+      }
+      if (
+        p.time <= after &&
+        (!afterEpisodes[p.episode.id] ||
+          afterEpisodes[p.episode.id].time < p.time)
+      ) {
+        afterEpisodes[p.episode.id] = p;
+      }
+    });
+
+    const chart: WaktoonEpisodeChart[] = [];
+
+    Object.entries(afterEpisodes).forEach(([id, afterEpisode]) => {
+      const beforeEpisode = beforeEpisodes[id];
+      if (!beforeEpisode) {
+        return;
+      }
+      const chartItem = new WaktoonEpisodeChart({
+        id: `${duration}:${afterEpisode.episode.id}`,
+        episode: afterEpisode.episode,
+        duration,
+        increasedReadCount: afterEpisode.readCount - beforeEpisode.readCount,
+        increasedCommentCount:
+          afterEpisode.commentCount - beforeEpisode.commentCount,
+        increasedUpCount: afterEpisode.upCount - beforeEpisode.upCount,
+      });
+      chart.push(chartItem);
+    });
+
+    return chart;
+  }
+
+  async updateEpisodeChart() {
+    const now = new Date();
+    const popularity = await this.waktoonEpisodePopularityRepository.find({
+      where: {
+        time: LessThanOrEqual(parseInt(this.generateDateHourString(now))),
+      },
+      relations: ['episode'],
+    });
+
+    const hourlyChart = await this.generateEpisodeChart(
+      popularity,
+      'hourly',
+      now,
+    );
+    const _24hoursChart = await this.generateEpisodeChart(
+      popularity,
+      '24hours',
+      now,
+    );
+    const dailyChart = await this.generateEpisodeChart(
+      popularity,
+      'daily',
+      now,
+    );
+    const weeklyChart = await this.generateEpisodeChart(
+      popularity,
+      'weekly',
+      now,
+    );
+    const monthlyChart = await this.generateEpisodeChart(
+      popularity,
+      'monthly',
+      now,
+    );
+
+    const chartItems = [
+      ...hourlyChart,
+      ..._24hoursChart,
+      ...dailyChart,
+      ...weeklyChart,
+      ...monthlyChart,
+    ];
+
+    await this.waktoonEpisodeChartRepository.manager.transaction(
+      async (manager) => {
+        while (chartItems.length > 0) {
+          const chunk = chartItems.splice(0, 500);
+          await manager.upsert(WaktoonEpisodeChart, chunk, ['id']);
+        }
+      },
+    );
+
+    return {
+      hourly: hourlyChart.length,
+      _24hours: _24hoursChart.length,
+      daily: dailyChart.length,
+      weekly: weeklyChart.length,
+      monthly: monthlyChart.length,
+    };
+  }
+
   async updateAuthors() {
     let skipped = 0;
     const authors: WaktoonAuthor[] = [];
@@ -554,12 +653,14 @@ export class WaktoonService {
     const resultEpisode = await this.updateEpisodes();
     const resultPopularity = await this.saveEpisodePopularity();
     const resultSeries = await this.updateSeries();
+    const resultChart = await this.updateEpisodeChart();
 
     return {
       article: resultArticle,
       episode: resultEpisode.length,
       popularity: resultPopularity,
       series: resultSeries,
+      chart: resultChart,
     };
   }
 

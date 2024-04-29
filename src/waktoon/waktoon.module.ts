@@ -8,6 +8,7 @@ import { WaktoonAuthor } from './entities/waktoon-author.entity';
 import { WaktoonSeries } from './entities/waktoon-series.entity';
 import { WaktoonEpisode } from './entities/waktoon-episode.entity';
 import { WaktoonEpisodePopularity } from './entities/waktoon-episode-popularity.entity';
+import { WaktoonEpisodeChart } from './entities/waktoon-episode-chart.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { WaktoonEpisodePopularity } from './entities/waktoon-episode-popularity.
       WaktoonSeries,
       WaktoonEpisode,
       WaktoonEpisodePopularity,
+      WaktoonEpisodeChart,
     ]),
     NavercafeModule,
   ],

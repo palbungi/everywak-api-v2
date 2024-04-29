@@ -12,16 +12,18 @@ export const OrderByTypes: ReadonlyRecord<OrderBy> = {
   comment: 'comment',
 };
 
-export class SearchEpisodeChartDto {
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  public readonly beginAt: number;
+export type Duration = 'hourly' | '24hours' | 'daily' | 'weekly' | 'monthly';
+export const DurationTypes: ReadonlyRecord<Duration> = {
+  hourly: 'hourly',
+  '24hours': '24hours',
+  daily: 'daily',
+  weekly: 'weekly',
+  monthly: 'monthly',
+};
 
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  public readonly endAt: number;
+export class SearchEpisodeChartDto {
+  @IsEnum(DurationTypes)
+  public readonly duration: Duration;
 
   @IsOptional()
   @IsEnum(OrderByTypes)

@@ -69,7 +69,7 @@ export class WaktoonController {
     //return this.waktoonService.updateAuthors();
   }
 
-  // 한 시간에 한 번 게시글/에피소드/시리즈 갱신
+  // 한 시간에 한 번 게시글/에피소드/시리즈/차트 갱신
   @Cron('1 * * * *')
   updateWaktoonCron() {
     return this.waktoonService.updateWaktoon();

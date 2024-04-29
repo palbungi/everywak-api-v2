@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
@@ -10,6 +11,7 @@ import {
 import { ulid } from 'ulidx';
 import { WaktoonArticle } from './waktoon-article.entity';
 import { WaktoonAuthor } from './waktoon-author.entity';
+import { WaktoonEpisodeChart } from './waktoon-episode-chart.entity';
 import { WaktoonSeries } from './waktoon-series.entity';
 
 @Entity()
@@ -69,6 +71,9 @@ export class WaktoonEpisode {
     referencedColumnName: 'id',
   })
   public series: WaktoonSeries;
+
+  @OneToMany(() => WaktoonEpisodeChart, (chart) => chart.episode)
+  public charts: WaktoonEpisodeChart[];
 
   constructor(partial: Partial<WaktoonEpisode>) {
     Object.assign(this, partial);
