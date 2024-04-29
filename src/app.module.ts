@@ -14,6 +14,7 @@ import { FetchModule } from './fetch/fetch.module';
 import { ObiModule } from './obi/obi.module';
 import { VideoModule } from './video/video.module';
 import { WaktoonModule } from './waktoon/waktoon.module';
+import { MusicModule } from './music/music.module';
 import databaseConfig from './config/database.config';
 import youtubeConfig from './config/youtube.config';
 
@@ -44,6 +45,7 @@ import youtubeConfig from './config/youtube.config';
     ObiModule,
     VideoModule,
     WaktoonModule,
+    MusicModule,
   ],
   controllers: [AppController],
   providers: [],
