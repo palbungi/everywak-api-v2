@@ -24,6 +24,8 @@ import youtubeConfig from './config/youtube.config';
       envFilePath:
         process.env.NODE_ENV === 'dev'
           ? '.env.development.local'
+          : process.env.NODE_ENV === 'test'
+          ? '.env.test.local'
           : '.env.production.local',
       isGlobal: true,
     }),
