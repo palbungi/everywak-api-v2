@@ -5,7 +5,7 @@ import { AfreecaService } from './afreeca.service';
 describe('AfreecaService', () => {
   let service: AfreecaService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [FetchModule],
       providers: [AfreecaService],
@@ -16,5 +16,15 @@ describe('AfreecaService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('방송국 정보', async () => {
+    const station = await service.getStation('ecvhao');
+    expect(station?.station).toBeDefined();
+  });
+
+  it('생방송 정보', async () => {
+    const station = await service.getStream({ channelId: 'ecvhao' });
+    expect(typeof station?.CHANNEL.RESULT).toBe('number');
   });
 });
