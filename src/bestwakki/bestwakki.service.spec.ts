@@ -5,36 +5,34 @@ import databaseConfig from 'src/config/database.config';
 import { TypeOrmConfigService } from 'src/config/typeorm.config';
 import youtubeConfig from 'src/config/youtube.config';
 import { NavercafeModule } from 'src/navercafe/navercafe.module';
+import { DataSource } from 'typeorm';
 import { BestwakkiService } from './bestwakki.service';
 import { PopularArticle } from './entities/popular-article.entity';
 
 describe('BestwakkiService', () => {
   let service: BestwakkiService;
+  let dataSource: DataSource;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
           load: [databaseConfig, youtubeConfig],
-          envFilePath:
-            process.env.NODE_ENV === 'dev'
-              ? '.env.development.local'
-              : process.env.NODE_ENV === 'test'
-              ? '.env.test.local'
-              : '.env.production.local',
+          envFilePath: '.env.test.local',
           isGlobal: true,
         }),
-        TypeOrmModule.forFeature([PopularArticle]),
         TypeOrmModule.forRootAsync({
           imports: [ConfigModule],
           useClass: TypeOrmConfigService,
         }),
-        NavercafeModule, 
+        TypeOrmModule.forFeature([PopularArticle]),
+        NavercafeModule,
       ],
       providers: [BestwakkiService],
     }).compile();
 
     service = module.get<BestwakkiService>(BestwakkiService);
+    dataSource = module.get<DataSource>(DataSource);
   });
 
   it('should be defined', () => {
@@ -43,5 +41,10 @@ describe('BestwakkiService', () => {
 
   it('인기글 갱신', async () => {
     expect((await service.update()).identifiers).toBeInstanceOf(Array);
+    expect((await service.getAll()).length).toBeGreaterThan(0);
+  });
+
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 });
