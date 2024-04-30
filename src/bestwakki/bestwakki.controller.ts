@@ -16,7 +16,6 @@ export class BestwakkiController {
 
   @Get('/list')
   find(@Query() query: SearchArticleDto) {
-    console.log(query)
     return this.bestwakkiService.find(query);
   }
 

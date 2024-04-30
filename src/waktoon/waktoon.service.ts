@@ -592,7 +592,6 @@ export class WaktoonService {
 
     series.forEach((s) => {
       //remove all episodes
-      console.log(s.episodes);
       s.episodes.splice(0, s.episodes.length);
 
       episodes.forEach((e) => {
