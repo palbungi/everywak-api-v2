@@ -17,11 +17,11 @@ export class BestwakkiService {
   @Inject(NavercafeService)
   private readonly navercafeService: NavercafeService;
 
-  getAll(): Promise<PopularArticle[]> {
+  findAll(): Promise<PopularArticle[]> {
     return this.popularArticleRepository.find();
   }
 
-  search(searchArticleDto: SearchArticleDto) {
+  find(searchArticleDto: SearchArticleDto) {
     const searchTargetColumn: Record<SearchTarget, keyof PopularArticle> = {
       title: 'subject',
       author: 'nickname',

@@ -8,14 +8,16 @@ export class BestwakkiController {
   constructor(
     private readonly bestwakkiService: BestwakkiService,
   ) {}
+
   @Get()
-  getAll() {
-    return this.bestwakkiService.getAll();
+  findAll() {
+    return this.bestwakkiService.findAll();
   }
+
   @Get('/list')
-  search(@Query() query: SearchArticleDto) {
+  find(@Query() query: SearchArticleDto) {
     console.log(query)
-    return this.bestwakkiService.search(query);
+    return this.bestwakkiService.find(query);
   }
 
   @Get('/update')
