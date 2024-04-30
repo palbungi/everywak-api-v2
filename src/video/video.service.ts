@@ -91,31 +91,35 @@ export class VideoService {
     return youtubeChannels;
   }
 
-  async getYoutubeVideos(members: Member[], selectAll: boolean = true) {
+  async getYoutubeVideos(members: Member[], currentVideoIds: string[]) {
     const youtubeChannels = await this.getYoutubeChannels(members);
 
     const result: YoutubeVideo[] = [];
+    const videoIds: string[] = [...currentVideoIds];
     for (const youtubeChannel of youtubeChannels) {
       const playlistItems = await this.youtubeService.getPlaylistItems(
         new SelectPlaylistDto({
           playlistId: youtubeChannel.uploads,
-          selectAll,
+          selectAll: currentVideoIds.length === 0,
         }),
       );
+      videoIds.push(
+        ...playlistItems.map((item) => item.snippet.resourceId.videoId),
+      );
+
       console.log(
         youtubeChannel.name,
         youtubeChannel.channelId,
         playlistItems.length,
       );
-      const videoIds = playlistItems.map(
-        (item) => item.snippet.resourceId.videoId,
-      );
-      const videos = await this.youtubeService.getVideos(
-        new SelectVideoDto({ videoIds }),
-      );
-
-      result.push(...videos);
     }
+
+    const videos = await this.youtubeService.getVideos(
+      new SelectVideoDto({ videoIds: [...new Set(videoIds)] }),
+    );
+
+    result.push(...videos);
+
     return result;
   }
 
@@ -145,7 +149,11 @@ export class VideoService {
 
   async updateVideos(fastUpdate: boolean = false) {
     const members = await this.memberService.findAll();
-    const youtubeVideos = await this.getYoutubeVideos(members, !fastUpdate);
+    const oldVideos = await this.findAll();
+    const youtubeVideos = await this.getYoutubeVideos(
+      members,
+      oldVideos.map((video) => video.videoId),
+    );
 
     const videos = youtubeVideos.map((video) => {
       const member = members.find((member) =>
