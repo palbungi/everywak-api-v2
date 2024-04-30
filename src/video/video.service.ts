@@ -29,6 +29,10 @@ export class VideoService {
   @Inject(YoutubeService)
   private readonly youtubeService: YoutubeService;
 
+  findAll() {
+    return this.videoRepository.find();
+  }
+
   async find(searchVideoDto: SearchVideoDto) {
     const orderBy: Record<OrderBy, FindOptionsOrder<Video>> = {
       time: { publishedTimestamp: 'DESC' },
