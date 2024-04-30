@@ -36,7 +36,7 @@ export class YoutubeService {
    * @description ISO 8601에 따라 정의된 유튜브식 duration을 정수로 변환합니다.
    */
   convertYTDurationToInteger(duration: string): number {
-    if (duration == 'P0D') {
+    if ([null, undefined, 'P0D', 'P', ''].includes(duration)) {
       return 0;
     }
     const [orig, hour, min, sec] = duration.match(
