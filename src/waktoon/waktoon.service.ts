@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NavercafeService } from 'src/navercafe/navercafe.service';
 import { generateDateHourString } from 'src/util/functions';
@@ -91,6 +96,10 @@ export class WaktoonService {
   }
 
   async getEpisodeChart(dto: SearchEpisodeChartDto) {
+    if (!dto.duration) {
+      throw new BadRequestException('duration is required');
+    }
+    
     const orderBy: Record<
       EpisodeChartOrderBy,
       FindOptionsOrder<WaktoonEpisodeChart>

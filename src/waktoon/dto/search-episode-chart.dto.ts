@@ -41,4 +41,8 @@ export class SearchEpisodeChartDto {
   @IsInt()
   @Min(1)
   public readonly page: number = 1;
+
+  constructor(partial: Partial<SearchEpisodeChartDto>) {
+    Object.assign(this, partial);
+  }
 }
