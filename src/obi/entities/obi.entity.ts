@@ -28,7 +28,7 @@ export class OBI {
   @Column({ type: 'varchar', length: 192, nullable: true, default: '' })
   public description: string;
 
-  @ManyToOne(() => Member)
+  @ManyToOne(() => Member, null, { onDelete: 'CASCADE' })
   @JoinColumn([
     {
       name: 'memberId',

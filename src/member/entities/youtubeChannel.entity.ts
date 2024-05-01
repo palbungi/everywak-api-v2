@@ -34,7 +34,9 @@ export class YoutubeChannel {
   })
   public uploads: string;
 
-  @ManyToOne(() => Member, (member) => member.youtubeChannel)
+  @ManyToOne(() => Member, (member) => member.youtubeChannel, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'memberId' })
   public member: Member;
 }

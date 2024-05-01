@@ -59,7 +59,7 @@ export class Live {
   })
   public viewerCount: number;
 
-  @OneToOne(() => LivePlatform)
+  @OneToOne(() => LivePlatform, null, { onDelete: 'CASCADE' })
   @JoinColumn([
     {
       name: 'memberId',

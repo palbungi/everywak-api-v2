@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulidx';
+import { Member } from './member.entity';
 
 @Entity()
 export class Profile {
@@ -9,6 +10,12 @@ export class Profile {
     default: ulid(),
   })
   public id: string;
+
+  @OneToOne(() => Member, (member) => member.profile, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'memberId' })
+  public member: Member;
 
   @Column({
     type: 'varchar',
@@ -23,5 +30,4 @@ export class Profile {
     nullable: true,
   })
   public offlineImage: string;
-
 }

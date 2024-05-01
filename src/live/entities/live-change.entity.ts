@@ -10,7 +10,9 @@ export class LiveChange {
   })
   public id: string = ulid();
 
-  @ManyToOne(() => LivePlatform)
+  @ManyToOne(() => LivePlatform, null, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn([
     {
       name: 'memberId',

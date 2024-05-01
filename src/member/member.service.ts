@@ -1,9 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Waktaverse } from 'src/constants/waktaverse';
-import { LiveChange } from 'src/live/entities/live-change.entity';
-import { Live } from 'src/live/entities/live.entity';
-import { OBI } from 'src/obi/entities/obi.entity';
 import { SelectChannelDto } from 'src/youtube/dto/select-channel.dto';
 import { YoutubeService } from 'src/youtube/youtube.service';
 import { Repository } from 'typeorm';
@@ -84,19 +81,8 @@ export class MemberService {
   /**
    * @description 멤버 전체 삭제
    */
-  dropMemberAll() {
-    return this.memberRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        await transactionalEntityManager.delete(LiveChange, {});
-        await transactionalEntityManager.delete(Live, {});
-        await transactionalEntityManager.delete(OBI, {});
-        await transactionalEntityManager.delete(LivePlatform, {});
-        await transactionalEntityManager.delete(YoutubeChannel, {});
-        await transactionalEntityManager.delete(Social, {});
-        await transactionalEntityManager.delete(Member, {});
-        await transactionalEntityManager.delete(Profile, {});
-      },
-    );
+  dropAll() {
+    return this.memberRepository.delete({});
   }
 
   /**
@@ -244,33 +230,13 @@ export class MemberService {
       return memberEntity;
     });
 
-    await this.memberRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        // 기존 데이터 삭제
-        await this.dropMemberAll();
+    await this.memberRepository.manager.transaction(async (manager) => {
+      // 기존 데이터 삭제
+      await this.dropAll();
 
-        // 멤버 정보 저장
-        for (const member of members) {
-          await transactionalEntityManager.save(member);
-          await transactionalEntityManager.save(member.profile);
-          if (member.livePlatform) {
-            for (const livePlatform of member.livePlatform) {
-              await transactionalEntityManager.save(livePlatform);
-            }
-          }
-          if (member.youtubeChannel) {
-            for (const youtubeChannel of member.youtubeChannel) {
-              await transactionalEntityManager.save(youtubeChannel);
-            }
-          }
-          if (member.social) {
-            for (const social of member.social) {
-              await transactionalEntityManager.save(social);
-            }
-          }
-        }
-      },
-    );
+      // 멤버 정보 저장
+      await manager.save(members);
+    });
 
     await this.updateAllMemberProfileImage();
 

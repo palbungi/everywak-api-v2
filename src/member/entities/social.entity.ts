@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulidx';
 import { Member } from './member.entity';
 
@@ -34,7 +28,9 @@ export class Social {
   })
   public userId: string;
 
-  @ManyToOne(() => Member)
+  @ManyToOne(() => Member, (member) => member.social, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'memberId' })
   public member: Member;
 }

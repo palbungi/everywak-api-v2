@@ -35,16 +35,15 @@ export class Member {
   })
   public role: string;
 
-  @OneToOne(() => Profile, { cascade: true, onDelete: 'CASCADE' })
-  @JoinColumn()
-  public profile: Relation<Profile>;
+  @OneToOne(() => Profile, (profile) => profile.member, { cascade: true })
+  public profile: Profile;
 
-  @OneToMany(() => LivePlatform, (livePlatform) => livePlatform.member)
+  @OneToMany(() => LivePlatform, (livePlatform) => livePlatform.member, { cascade: true })
   public livePlatform: LivePlatform[];
 
-  @OneToMany(() => YoutubeChannel, (youtubeChannel) => youtubeChannel.member)
+  @OneToMany(() => YoutubeChannel, (youtubeChannel) => youtubeChannel.member, { cascade: true })
   public youtubeChannel: YoutubeChannel[];
 
-  @OneToMany(() => Social, (social) => social.member)
+  @OneToMany(() => Social, (social) => social.member, { cascade: true })
   public social: Social[];
 }
