@@ -1,53 +1,71 @@
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AfreecaModule } from 'src/afreeca/afreeca.module';
-import databaseConfig from 'src/config/database.config';
-import { TypeOrmConfigService } from 'src/config/typeorm.config';
-import youtubeConfig from 'src/config/youtube.config';
-import { Member } from 'src/member/entities/member.entity';
-import { MemberModule } from 'src/member/member.module';
-import { YoutubeModule } from 'src/youtube/youtube.module';
-import { DataSource } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { AfreecaService } from 'src/afreeca/afreeca.service';
+import { MemberService } from 'src/member/member.service';
+import { YoutubeService } from 'src/youtube/youtube.service';
+import { Repository } from 'typeorm';
 import { LiveChange } from './entities/live-change.entity';
 import { Live } from './entities/live.entity';
 import { LiveController } from './live.controller';
 import { LiveService } from './live.service';
 
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
+
 describe('LiveController', () => {
   let controller: LiveController;
-  let dataSource: DataSource;
+  let liveRepository: MockRepository<Live>;
+  let liveChangeRepository: MockRepository<LiveChange>;
+  let memberService = {
+    findMemberById: jest.fn(),
+  };
+  let afreecaService = {
+    getStation: jest.fn(),
+    getStream: jest.fn(),
+  };
+  let youtubeService = {
+    getChannels: jest.fn(),
+  };
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          load: [databaseConfig, youtubeConfig],
-          envFilePath: '.env.test.local',
-          isGlobal: true,
-        }),
-        TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
-          useClass: TypeOrmConfigService,
-        }),
-        TypeOrmModule.forFeature([Live, LiveChange, Member]),
-        MemberModule,
-        AfreecaModule,
-        YoutubeModule,
-      ],
       controllers: [LiveController],
-      providers: [LiveService],
+      providers: [
+        LiveService,
+        {
+          provide: getRepositoryToken(Live),
+          useValue: {
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(LiveChange),
+          useValue: {
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: MemberService,
+          useValue: memberService,
+        },
+        {
+          provide: AfreecaService,
+          useValue: afreecaService,
+        },
+        {
+          provide: YoutubeService,
+          useValue: youtubeService,
+        },
+      ],
     }).compile();
 
     controller = module.get<LiveController>(LiveController);
-    dataSource = module.get<DataSource>(DataSource);
+    liveRepository = module.get<MockRepository<Live>>(getRepositoryToken(Live));
+    liveChangeRepository = module.get<MockRepository<LiveChange>>(
+      getRepositoryToken(LiveChange),
+    );
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  afterAll(async () => {
-    await dataSource.destroy();
   });
 });
