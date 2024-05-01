@@ -9,7 +9,7 @@ export class SelectPlaylistDto {
 
   @IsOptional()
   @IsInt()
-  readonly selectAll: boolean = true;
+  readonly selectAll: boolean = false;
 
   constructor(partial: Partial<SelectPlaylistDto>) {
     Object.assign(this, partial);
