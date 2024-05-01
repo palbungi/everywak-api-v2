@@ -86,8 +86,15 @@ export class MusicService {
   async create(dto: CreateMusicDto) {
     const members = await this.memberService.findAll();
 
+    const video = await this.videoService.getVideo(dto.videoId);
+    if (!video) {
+      throw new BadRequestException('Video not found');
+    }
+
     const singers = dto.singers.map((id) => members.find((m) => m.id === id));
-    return await this.musicRepository.save(new Music({ ...dto, singers }));
+    return await this.musicRepository.save(
+      new Music({ ...dto, video, singers }),
+    );
   }
 
   async edit(dto: UpdateMusicDto) {

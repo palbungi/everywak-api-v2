@@ -71,6 +71,13 @@ export class VideoService {
     });
   }
 
+  async getVideo(videoId: string) {
+    return this.videoRepository.findOne({
+      where: { videoId },
+      relations: ['member', 'channel'],
+    });
+  }
+
   findAllViewCount() {
     return this.videoViewCountRepository.find();
   }
