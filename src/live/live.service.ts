@@ -181,6 +181,10 @@ export class LiveService {
   async updateWaktaverseLive() {
     const members = await this.memberService.findAll();
 
+    if (members.length === 0) {
+      return [];
+    }
+
     const oldLives = await this.findLiveAll();
     const oldLivesFixed = oldLives.map((live) => ({
       ...live,
