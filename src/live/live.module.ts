@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AfreecaModule } from 'src/afreeca/afreeca.module';
-import { Member } from 'src/member/entities/member.entity';
 import { MemberModule } from 'src/member/member.module';
 import { YoutubeModule } from 'src/youtube/youtube.module';
 import { LiveChange } from './entities/live-change.entity';
@@ -11,7 +10,7 @@ import { LiveService } from './live.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Live, LiveChange, Member]),
+    TypeOrmModule.forFeature([Live, LiveChange]),
     MemberModule,
     AfreecaModule,
     YoutubeModule,
