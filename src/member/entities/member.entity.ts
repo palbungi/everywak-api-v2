@@ -46,4 +46,8 @@ export class Member {
 
   @OneToMany(() => Social, (social) => social.member, { cascade: true })
   public social: Social[];
+
+  constructor(partial: Partial<Member>) {
+    Object.assign(this, partial);
+  }
 }

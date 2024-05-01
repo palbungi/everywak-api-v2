@@ -54,15 +54,15 @@ export class MemberService {
    */
   createMember(createMemberDto: CreateMemberDto) {
     const memberAndProfiles = createMemberDto.members.map((dto) => {
-      const member = new Member();
-      member.id = ulid();
-      member.name = dto.name;
-      member.role = dto.role;
-
       const profile = new Profile();
       profile.id = ulid();
 
-      member.profile = profile;
+      const member = new Member({
+        id: ulid(),
+        name: dto.name,
+        role: dto.role,
+        profile,
+      });
       return { member, profile };
     });
 
@@ -183,15 +183,15 @@ export class MemberService {
   async insertWaktaverseMembers() {
     // 왁타버스 멤버 정보 가져오기
     const members = Waktaverse.map((member) => {
-      const memberEntity = new Member();
-      memberEntity.id = member.id;
-      memberEntity.name = member.name;
-      memberEntity.role = member.role;
-
       const profile = new Profile();
       profile.id = ulid();
 
-      memberEntity.profile = profile;
+      const memberEntity = new Member({
+        id: member.id,
+        name: member.name,
+        role: member.role,
+        profile,
+      });
 
       memberEntity.livePlatform = member.lives.map((platform) => {
         const livePlatformEntity = new LivePlatform();
