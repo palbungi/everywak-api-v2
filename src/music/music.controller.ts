@@ -35,4 +35,10 @@ export class MusicController {
   updateMusicChartCron() {
     return this.musicService.updateMusicChart();
   }
+
+  // 한 시간에 한 번 왁타버스 올 뮤직 재생목록에서 뮤직 자동 추가
+  @Cron('1 * * * *')
+  updateWaikatabusMusicCron() {
+    return this.musicService.createMusicFromWakAllMusic();
+  } 
 }

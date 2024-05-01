@@ -1,9 +1,16 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MemberService } from 'src/member/member.service';
 import { generateDateHourString } from 'src/util/functions';
 import { VideoViewCount } from 'src/video/entities/video-view-count.entity';
 import { VideoService } from 'src/video/video.service';
+import { SelectPlaylistDto } from 'src/youtube/dto/select-playlist.dto';
+import { YoutubeService } from 'src/youtube/youtube.service';
 import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { DeleteMusicDto } from './dto/delete-music.dto';
@@ -30,6 +37,9 @@ export class MusicService {
 
   @Inject(VideoService)
   private videoService: VideoService;
+
+  @Inject(YoutubeService)
+  private youtubeService: YoutubeService;
 
   findAll() {
     return this.musicRepository.find();
@@ -260,5 +270,52 @@ export class MusicService {
       weekly: weeklyChart.length,
       monthly: monthlyChart.length,
     };
+  }
+
+  async createMusicFromWakAllMusic() {
+    const targetVideos = await this.getVideosCreateNeeded();
+
+    const members = await this.memberService.findAll();
+
+    const result: Music[] = [];
+    for (const video of targetVideos) {
+      const singers = members
+        .filter((member) => video.title.includes(member.name))
+        .map((member) => member.id);
+      result.push(
+        await this.create(
+          new CreateMusicDto({
+            videoId: video.videoId,
+            title: video.title,
+            singerName: video.member.name,
+            singers,
+          }),
+        ),
+      );
+    }
+
+    return result;
+  }
+
+  async getVideosCreateNeeded() {
+    const playlistItems = await this.youtubeService.getPlaylistItems(
+      new SelectPlaylistDto({
+        playlistId: 'PLWTycz4el4t7ZCxkGYyekoP1iBxmOM4zZ',
+      }),
+    );
+
+    const musics = await this.findAll();
+    const videos = await this.videoService.findAll();
+
+    const result = videos.filter((video) => {
+      return (
+        !musics.find((music) => music.video.videoId === video.videoId) &&
+        playlistItems.find(
+          (item) => item.snippet.resourceId.videoId === video.videoId,
+        )
+      );
+    });
+
+    return result;
   }
 }

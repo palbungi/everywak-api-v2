@@ -14,4 +14,8 @@ export class CreateMusicDto {
   @IsString({ each: true })
   @Length(26, 26, { each: true })
   public readonly singers: string[];
+
+  constructor(partial: Partial<CreateMusicDto>) {
+    Object.assign(this, partial);
+  }
 }
