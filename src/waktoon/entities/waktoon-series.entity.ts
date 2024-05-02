@@ -57,7 +57,7 @@ export class WaktoonSeries {
   })
   public authorName: string;
 
-  @ManyToMany(() => WaktoonAuthor, null, { onDelete: 'SET NULL' })
+  @ManyToMany(() => WaktoonAuthor)
   @JoinTable({
     name: 'waktoon_series_member',
     joinColumn: {
