@@ -43,7 +43,7 @@ export class WaktoonEpisode {
   })
   public title: string;
 
-  @ManyToOne(() => WaktoonAuthor)
+  @ManyToOne(() => WaktoonAuthor, null, { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'memberKey',
     referencedColumnName: 'memberKey',
@@ -65,6 +65,7 @@ export class WaktoonEpisode {
 
   @ManyToOne(() => WaktoonSeries, (series) => series.episodes, {
     nullable: true,
+    onDelete: 'SET NULL',
   })
   @JoinColumn({
     name: 'seriesId',

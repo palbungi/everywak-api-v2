@@ -40,7 +40,7 @@ export class WaktoonArticle {
   })
   public title: string;
 
-  @ManyToOne(() => WaktoonAuthor)
+  @ManyToOne(() => WaktoonAuthor, null, { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'memberKey',
     referencedColumnName: 'memberKey',
@@ -68,8 +68,8 @@ export class WaktoonArticle {
     type: 'int',
   })
   public upCount: number;
-  
+
   constructor(partial: Partial<WaktoonArticle>) {
     Object.assign(this, partial);
-  };
+  }
 }

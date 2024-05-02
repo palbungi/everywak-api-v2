@@ -9,7 +9,7 @@ export class WaktoonEpisodePopularity {
   })
   public id: string;
 
-  @ManyToOne(() => WaktoonEpisode)
+  @ManyToOne(() => WaktoonEpisode, null, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'episodeId' })
   public episode: WaktoonEpisode;
 

@@ -9,7 +9,7 @@ export class MusicChart {
   })
   public id: string;
 
-  @ManyToOne(() => Music)
+  @ManyToOne(() => Music, null, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'musicId' })
   public music: Music;
 

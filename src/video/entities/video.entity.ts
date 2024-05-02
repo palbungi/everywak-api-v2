@@ -37,11 +37,11 @@ export class Video {
   })
   public title: string;
 
-  @ManyToOne(() => Member)
+  @ManyToOne(() => Member, null, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'memberId' })
   public member: Member;
 
-  @ManyToOne(() => YoutubeChannel)
+  @ManyToOne(() => YoutubeChannel, null, { onDelete: 'CASCADE' })
   @JoinColumn([
     { name: 'channel_id', referencedColumnName: 'id' },
     { name: 'channel_type', referencedColumnName: 'type' },

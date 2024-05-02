@@ -9,7 +9,7 @@ export class VideoViewCount {
   })
   public id: string;
 
-  @ManyToOne(() => Video)
+  @ManyToOne(() => Video, null, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'videoId' })
   public video: Video;
 

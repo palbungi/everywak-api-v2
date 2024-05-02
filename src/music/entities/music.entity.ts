@@ -43,7 +43,7 @@ export class Music {
   })
   public singerName: string;
 
-  @ManyToMany(() => Member)
+  @ManyToMany(() => Member, null, { onDelete: 'SET NULL' })
   @JoinTable({
     name: 'music_singer',
     joinColumn: { name: 'musicId', referencedColumnName: 'id' },
