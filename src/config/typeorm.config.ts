@@ -15,7 +15,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       password: this.configService.get<string>('database.password'),
       database: 'everywak',
       entities: [__dirname + '/../*/entities/*.entity.{t,j}s'],
-      synchronize: true,
+      synchronize: this.configService.get<boolean>('database.synchronize'),
       logging: true,
     };
   }
