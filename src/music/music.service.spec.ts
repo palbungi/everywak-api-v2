@@ -104,6 +104,9 @@ describe('MusicService', () => {
     });
 
     it('should return music', async () => {
+      jest
+        .spyOn(videoService, 'getVideo')
+        .mockImplementation(() => new Promise((r) => r(video)));
       const result = await service.create(dto);
       expect(result).toBeInstanceOf(Music);
     });
@@ -192,9 +195,7 @@ describe('MusicService', () => {
     });
 
     it('should call create if getVideosCreateNeeded returns some videos', async () => {
-      jest
-        .spyOn(service, 'getVideosCreateNeeded')
-        .mockResolvedValue([video]);
+      jest.spyOn(service, 'getVideosCreateNeeded').mockResolvedValue([video]);
       jest
         .spyOn(service, 'create')
         .mockResolvedValue(new Promise((r) => r(new Music({}))));
