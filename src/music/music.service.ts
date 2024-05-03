@@ -42,7 +42,9 @@ export class MusicService {
   private youtubeService: YoutubeService;
 
   findAll() {
-    return this.musicRepository.find();
+    return this.musicRepository.find({
+      relations: ['video', 'singers'],
+    });
   }
 
   findById(id: string) {

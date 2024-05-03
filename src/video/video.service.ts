@@ -30,7 +30,9 @@ export class VideoService {
   private readonly youtubeService: YoutubeService;
 
   findAll() {
-    return this.videoRepository.find();
+    return this.videoRepository.find({
+      relations: ['member', 'channel'],
+    });
   }
 
   async find(searchVideoDto: SearchVideoDto) {
