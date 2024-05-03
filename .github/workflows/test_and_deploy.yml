@@ -1,0 +1,50 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  # Config Test Before Build
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    - name: Nodejs 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.16.0
+        cache: 'npm'
+
+    - name: Setting .env
+      run: | 
+        echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }} >> .env.test.local
+        echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }} >> .env.test.local
+        echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} >> .env.test.local
+        echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} >> .env.test.local
+        echo "DATABASE_SYNCHRONIZE=true" >> .env.test.local
+        echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env.test.local
+        echo "SSL=false" >> .env.test.local
+        cat .env.test.local
+
+    - run: npm install
+    - run: npm run test
+
+  # deploy:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3.3.0
+
+  #     - name: execute remote ssh
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.REMOTE_SSH_HOST }}
+  #         username: ${{ secrets.REMOTE_SSH_USERNAME }}
+  #         key: ${{ secrets.REMOTE_SSH_KEY }}
+  #         passphrase: ${{ secrets.REMOTE_SSH_PASSPHRASE }}
+  #         port: ${{ secrets.REMOTE_SSH_PORT }}
+  #         script: |
+  #           whoami
