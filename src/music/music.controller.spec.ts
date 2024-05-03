@@ -1,50 +1,79 @@
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import databaseConfig from 'src/config/database.config';
-import { TypeOrmConfigService } from 'src/config/typeorm.config';
-import youtubeConfig from 'src/config/youtube.config';
-import { MemberModule } from 'src/member/member.module';
-import { VideoModule } from 'src/video/video.module';
-import { DataSource } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Member } from 'src/member/entities/member.entity';
+import { MemberService } from 'src/member/member.service';
+import { VideoService } from 'src/video/video.service';
+import { YoutubeService } from 'src/youtube/youtube.service';
+import { Repository } from 'typeorm';
 import { MusicChart } from './entities/music-chart.entity';
 import { Music } from './entities/music.entity';
 import { MusicController } from './music.controller';
 import { MusicService } from './music.service';
 
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
+
 describe('MusicController', () => {
   let controller: MusicController;
-  let dataSource: DataSource;
+  let musicRepository: MockRepository<Music>;
+  let musicChartRepository: MockRepository<MusicChart>;
+  let memberService = {
+    findAll: jest
+      .fn()
+      .mockResolvedValue(
+        new Promise((r) =>
+          r([new Member({ id: 'member1' }), new Member({ id: 'member2' })]),
+        ),
+      ),
+  };
+  let videoService = {
+    findAll: jest.fn(),
+    findViewCount: jest.fn(),
+    getVideo: jest.fn(),
+  };
+  let youtubeService = {
+    getPlaylistItems: jest.fn(),
+  };
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          load: [databaseConfig, youtubeConfig],
-          envFilePath: '.env.test.local',
-          isGlobal: true,
-        }),
-        TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
-          useClass: TypeOrmConfigService,
-        }),
-        TypeOrmModule.forFeature([Music, MusicChart]),
-        MemberModule,
-        VideoModule,
-      ],
       controllers: [MusicController],
-      providers: [MusicService],
+      providers: [
+        MusicService,
+        {
+          provide: getRepositoryToken(Music),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            save: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(MusicChart),
+          useValue: {
+            find: jest.fn(),
+            manager: {
+              transaction: jest.fn(),
+            },
+          },
+        },
+        { provide: MemberService, useValue: memberService },
+        { provide: VideoService, useValue: videoService },
+        { provide: YoutubeService, useValue: youtubeService },
+      ],
     }).compile();
 
     controller = module.get<MusicController>(MusicController);
-    dataSource = module.get<DataSource>(DataSource);
+    musicRepository = module.get<MockRepository<Music>>(
+      getRepositoryToken(Music),
+    );
+    musicChartRepository = module.get<MockRepository<MusicChart>>(
+      getRepositoryToken(MusicChart),
+    );
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  afterAll(async () => {
-    await dataSource.destroy();
   });
 });
