@@ -693,7 +693,7 @@ export const Waktaverse: Member[] = [
   },
   {
     id: '01HTZ06FJHBQB4HJADTDC8ZFC0',
-    name: '하쿠0089',
+    name: '티파니0421',
     role: 'gomem',
     lives: [
       {
@@ -899,23 +899,6 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'ninnin__2',
         id: '833726111',
-      },
-    ],
-  },
-  {
-    id: '01HTZ07YTKM8TDACC181F9E230',
-    name: '미스 발렌타인',
-    role: 'academy',
-    lives: [
-      {
-        type: 'afreeca',
-        name: 'missvalentin',
-        id: 'missvalentin',
-      },
-      {
-        type: 'twitch',
-        name: 'miss_valentine_day',
-        id: '913245557',
       },
     ],
   },
