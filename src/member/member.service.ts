@@ -136,12 +136,13 @@ export class MemberService {
   async createSocial(createSocialDto: CreateSocialDto) {
     const member = await this.findMemberById(createSocialDto.memberId);
 
-    const social = new Social();
-    social.id = member.id;
-    social.type = createSocialDto.type;
-    social.name = createSocialDto.name;
-    social.userId = createSocialDto.userId;
-    social.member = member;
+    const social = new Social({
+      id: member.id,
+      type: createSocialDto.type,
+      name: createSocialDto.name,
+      userId: createSocialDto.userId,
+      member,
+    });
 
     this.memberRepository.manager.transaction(
       async (transactionalEntityManager) => {
@@ -217,12 +218,13 @@ export class MemberService {
       });
 
       memberEntity.social = member.socials?.map((social) => {
-        const socialEntity = new Social();
-        socialEntity.id = member.id;
-        socialEntity.type = social.type;
-        socialEntity.name = social.name;
-        socialEntity.userId = social.id ?? social.name;
-        socialEntity.member = memberEntity;
+        const socialEntity = new Social({
+          id: member.id,
+          type: social.type,
+          name: social.name,
+          userId: social.id ?? social.name,
+          member: memberEntity,
+        });
 
         return socialEntity;
       });

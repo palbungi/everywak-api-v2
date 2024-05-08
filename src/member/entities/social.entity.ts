@@ -33,4 +33,9 @@ export class Social {
   })
   @JoinColumn({ name: 'memberId' })
   public member: Member;
+
+  constructor(partial: Partial<Social>) {
+    Object.assign(this, partial);
+    this.id = this.id || ulid();
+  }
 }
