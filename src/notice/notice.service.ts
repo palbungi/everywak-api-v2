@@ -43,7 +43,7 @@ export class NoticeService {
     const filteredArticles = noticeArticles.articleList.filter((notice) =>
       members.find(
         (member) =>
-          member.social.find((social) => social.type === 'navercafe')?.id ===
+          member.social.find((social) => social.type === 'cafe')?.userId ===
           notice.memberKey,
       ),
     );
@@ -56,8 +56,8 @@ export class NoticeService {
           subject: article.subject,
           member: members.find(
             (member) =>
-              member.social.find((social) => social.type === 'navercafe')
-                ?.id === article.memberKey,
+              member.social.find((social) => social.type === 'cafe')?.userId ===
+              article.memberKey,
           ),
           menuId: article.menuId,
           menuName: article.menuName,

@@ -17,7 +17,7 @@ const mockMembers = [
     id: 'a',
     social: [
       new Social({
-        type: 'navercafe',
+        type: 'cafe',
         id: 'test',
       }),
     ],
@@ -183,7 +183,7 @@ describe('NoticeService', () => {
           mockMembers.some(
             (member) =>
               member.social.find(
-                (socialItem) => socialItem.type === 'navercafe',
+                (socialItem) => socialItem.type === 'cafe',
               )?.id === article.memberKey,
           ),
         ).map((article) => new MemberNotice({
@@ -192,7 +192,7 @@ describe('NoticeService', () => {
           subject: article.subject,
           member: mockMembers.find(
             (member) =>
-              member.social.find((social) => social.type === 'navercafe')
+              member.social.find((social) => social.type === 'cafe')
                 ?.id === article.memberKey,
           ),
           menuId: article.menuId,
