@@ -15,7 +15,7 @@ export class SearchMemberNoticeDto {
   @IsOptional()
   @IsInt()
   @Type(() => Number)
-  @Min(5)
+  @Min(1)
   @Max(50)
   public readonly perPage: number = 30;
 
