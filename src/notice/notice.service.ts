@@ -35,12 +35,21 @@ export class NoticeService {
   }
 
   async update() {
-    const noticeArticles = await this.navercafeService.getArticleList(
-      new SelectArticleListDto({ menuId: 1 }),
-    );
+    const noticeArticles = [
+      ...(
+        await this.navercafeService.getArticleList(
+          new SelectArticleListDto({ menuId: 345 }), // 이세돌
+        )
+      ).articleList,
+      ...(
+        await this.navercafeService.getArticleList(
+          new SelectArticleListDto({ menuId: 24 }), // 우왁굳
+        )
+      ).articleList,
+    ];
     const members = await this.memberService.findAll();
 
-    const filteredArticles = noticeArticles.articleList.filter((notice) =>
+    const filteredArticles = noticeArticles.filter((notice) =>
       members.find(
         (member) =>
           member.social.find((social) => social.type === 'cafe')?.userId ===
