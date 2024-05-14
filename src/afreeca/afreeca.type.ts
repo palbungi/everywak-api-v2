@@ -218,3 +218,19 @@ export type StreamInfoOffline = {
     RESULT: 0;
   };
 };
+
+export type SignatureEmoteResponse = {
+  result: number;
+  data: SignatureEmote[];
+};
+
+export type SignatureEmote = {
+  title: string;
+  pc_img: string;
+  mobile_img: string;
+  pc_alternate_img: string;
+  mob_alternate_img: string;
+  move_img: 'Y' | 'N';
+  order_no: string;
+  black_keyword: 'Y' | 'N';
+};

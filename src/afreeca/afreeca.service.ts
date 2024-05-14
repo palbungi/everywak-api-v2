@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RequestDto } from 'src/fetch/dto/request.dto';
 import { FetchService } from 'src/fetch/fetch.service';
-import { Station, StreamInfo } from './afreeca.type';
+import { SignatureEmoteResponse, Station, StreamInfo } from './afreeca.type';
 import { SelectStreamDto } from './dto/select-stream.dto';
 
 @Injectable()
@@ -47,6 +47,15 @@ export class AfreecaService {
         body,
         headers: this.headers,
       }),
+    );
+  }
+
+  async getSignatureEmotes(channelId: string) {
+    const hostname = 'https://live.afreecatv.com';
+    const pathname = `/api/signature_emoticon_api.php`;
+    const params = { work: 'list', szBjId: channelId };
+    return await this.fetchService.request<SignatureEmoteResponse>(
+      new RequestDto({ hostname, pathname, params, headers: this.headers }),
     );
   }
 }

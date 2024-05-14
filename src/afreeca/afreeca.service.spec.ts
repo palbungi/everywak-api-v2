@@ -27,4 +27,23 @@ describe('AfreecaService', () => {
     const station = await service.getStream({ channelId: 'ecvhao' });
     expect(typeof station?.CHANNEL.RESULT).toBe('number');
   });
+
+  it('이모트 목록', async () => {
+    const emoteRes = await service.getSignatureEmotes('ecvhao');
+    expect(emoteRes?.result).toBe(1);
+    expect(emoteRes?.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: expect.any(String),
+          pc_img: expect.any(String),
+          mobile_img: expect.any(String),
+          pc_alternate_img: expect.any(String),
+          mob_alternate_img: expect.any(String),
+          move_img: expect.any(String),
+          order_no: expect.any(String),
+          black_keyword: expect.any(String),
+        }),
+      ]),
+    );
+  });
 });
