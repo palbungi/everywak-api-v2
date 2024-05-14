@@ -14,4 +14,9 @@ export class AfreecaController {
   getSteam(@Param('channelId') channelId: string) {
     return this.afreecaService.getStream({ channelId });
   }
+
+  @Get('/emote/:channelId')
+  getEmote(@Param('channelId') channelId: string) {
+    return this.afreecaService.getSignatureEmotes(channelId);
+  }
 }
