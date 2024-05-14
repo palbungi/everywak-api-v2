@@ -18,7 +18,7 @@ const mockMembers = [
     social: [
       new Social({
         type: 'cafe',
-        id: 'test',
+        userId: 'test',
       }),
     ],
   }),
@@ -63,9 +63,11 @@ describe('NoticeService', () => {
   let service: NoticeService;
   let memberNoticeRepository: MockRepository<MemberNotice>;
   let navercafeService = {
-    getArticleList: jest.fn().mockReturnValue({
-      articleList: mockArticleList,
-    }),
+    getArticleList: jest
+      .fn()
+      .mockReturnValue(
+        new Promise((resolve) => resolve({ articleList: mockArticleList })),
+      ),
   };
   let memberService = {
     findAll: jest.fn().mockReturnValue(mockMembers),
@@ -178,29 +180,34 @@ describe('NoticeService', () => {
     });
     it('should filter out notices that non-member wrote', async () => {
       await service.update();
+      const filteredArticles = mockArticleList
+      .filter((article) =>
+        mockMembers.some(
+          (member) =>
+            member.social.find((socialItem) => socialItem.type === 'cafe')
+              ?.userId === article.memberKey,
+        ),
+      )
+      .map(
+        (article) =>
+          new MemberNotice({
+            articleId: article.articleId,
+            publishedTimestamp: new Date(article.writeDateTimestamp),
+            subject: article.subject,
+            member: mockMembers.find(
+              (member) =>
+                member.social.find((social) => social.type === 'cafe')
+                  ?.userId === article.memberKey,
+            ),
+            menuId: article.menuId,
+            menuName: article.menuName,
+            readCount: article.readCount,
+            commentCount: article.commentCount,
+            upCount: article.likeItCount,
+          }),
+      );
       expect(memberNoticeRepository.upsert).toHaveBeenCalledWith(
-        mockArticleList.filter((article) =>
-          mockMembers.some(
-            (member) =>
-              member.social.find(
-                (socialItem) => socialItem.type === 'cafe',
-              )?.id === article.memberKey,
-          ),
-        ).map((article) => new MemberNotice({
-          articleId: article.articleId,
-          publishedTimestamp: new Date(article.writeDateTimestamp),
-          subject: article.subject,
-          member: mockMembers.find(
-            (member) =>
-              member.social.find((social) => social.type === 'cafe')
-                ?.id === article.memberKey,
-          ),
-          menuId: article.menuId,
-          menuName: article.menuName,
-          readCount: article.readCount,
-          commentCount: article.commentCount,
-          upCount: article.likeItCount,
-        })),
+        [...filteredArticles, ...filteredArticles],
         ['articleId'],
       );
     });
