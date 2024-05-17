@@ -177,8 +177,8 @@ export type StreamInfoOnline = {
     WC: number;
     PCON: number;
     PCON_TIME: number;
-    PCON_MONTH: any[];
-    PCON_OBJECT: any[];
+    PCON_MONTH: string[];
+    PCON_OBJECT: SubscriptionBadge[];
     FTK: string;
     BPCBANNER: boolean;
     BPCCHATPOPBANNER: boolean;
@@ -218,6 +218,11 @@ export type StreamInfoOffline = {
     RESULT: 0;
   };
 };
+
+export type SubscriptionBadge = {
+  MONTH: number;
+  FILENAME: string;
+}
 
 export type SignatureEmoteResponse = {
   result: number;
