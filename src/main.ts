@@ -23,6 +23,12 @@ async function bootstrap() {
       disableErrorMessages: true,
     }),
   );
+  app.enableCors({
+    origin: ((process.env.CORS_DOMAINS as string) || '').split(','),
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
   await app.listen(3000);
 }
 bootstrap();
