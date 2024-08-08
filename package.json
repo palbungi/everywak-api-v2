@@ -33,11 +33,14 @@
     "cross-env": "^7.0.3",
     "dnscache": "^1.0.2",
     "mysql2": "^3.9.4",
+    "nest-winston": "^1.9.7",
     "node-html-parser": "^6.1.13",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20",
-    "ulidx": "^2.3.0"
+    "ulidx": "^2.3.0",
+    "winston": "^3.14.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

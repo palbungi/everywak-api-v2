@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { readFileSync } from 'fs';
 import { AppModule } from './app.module';
+import { winstonLogger } from './util/logger/logger';
 
 async function bootstrap() {
   const ssl = process.env.SSL === 'true' ? true : false;
@@ -15,7 +16,10 @@ async function bootstrap() {
     };
   }
 
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions,
+    logger: winstonLogger,
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

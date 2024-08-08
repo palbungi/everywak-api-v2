@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -18,6 +18,7 @@ import { MusicModule } from './music/music.module';
 import { NoticeModule } from './notice/notice.module';
 import databaseConfig from './config/database.config';
 import youtubeConfig from './config/youtube.config';
+import { LoggerMiddleware } from './util/logger/logger.middleware';
 
 @Module({
   imports: [
@@ -50,4 +51,8 @@ import youtubeConfig from './config/youtube.config';
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

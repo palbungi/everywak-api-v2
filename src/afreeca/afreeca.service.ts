@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RequestDto } from 'src/fetch/dto/request.dto';
 import { FetchService } from 'src/fetch/fetch.service';
 import { SignatureEmoteResponse, Station, StreamInfo } from './afreeca.type';
@@ -8,6 +8,7 @@ import { SelectStreamDto } from './dto/select-stream.dto';
 export class AfreecaService {
   @Inject(FetchService)
   private readonly fetchService: FetchService;
+  private readonly logger = new Logger(AfreecaService.name);
 
   private readonly hostname = 'http://bjapi.afreecatv.com';
 
@@ -17,6 +18,7 @@ export class AfreecaService {
   };
 
   async getStation(channelId: string) {
+    this.logger.verbose(`방송국: ${channelId}`);
     const hostname = 'http://bjapi.afreecatv.com';
     const pathname = `/api/${channelId}/station`;
     return await this.fetchService.request<Station>(
@@ -25,6 +27,7 @@ export class AfreecaService {
   }
 
   async getStream(selectStreamDto: SelectStreamDto) {
+    this.logger.log(`생방송: ${selectStreamDto.channelId}`);
     const method = 'POST';
     const hostname = 'https://live.afreecatv.com';
     const pathname = `/afreeca/player_live_api.php`;
@@ -51,6 +54,7 @@ export class AfreecaService {
   }
 
   async getSignatureEmotes(channelId: string) {
+    this.logger.verbose(`구독 이모티콘: ${channelId}`);
     const hostname = 'https://live.afreecatv.com';
     const pathname = `/api/signature_emoticon_api.php`;
     const params = { work: 'list', szBjId: channelId };

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import parse from 'node-html-parser';
 import { Member } from 'src/member/entities/member.entity';
@@ -17,6 +17,7 @@ export class ObiService {
   private readonly navercafeService: NavercafeService;
   @Inject()
   private readonly memberService: MemberService;
+  private readonly logger = new Logger(ObiService.name);
 
   getYYMMDDString(dateTarget: Date) {
     const year = String(dateTarget.getFullYear());
@@ -26,6 +27,7 @@ export class ObiService {
   }
 
   findOBIByDate(selectDateOBIDto: SelectDateOBIDto) {
+    this.logger.log(`날짜별 뱅온정보 조회: ${selectDateOBIDto.date}`);
     return this.obiRepository.find({
       where: { date: selectDateOBIDto.date },
       relations: ['member'],
@@ -33,6 +35,7 @@ export class ObiService {
   }
 
   findOBIRecent() {
+    this.logger.log(`최근 뱅온정보 조회`);
     return this.obiRepository.find({
       where: {
         publishedTimestamp: MoreThan(
@@ -153,6 +156,7 @@ export class ObiService {
   }
 
   async updateOBI() {
+    this.logger.log(`뱅온정보 갱신 시작`);
     const members = await this.memberService.findAll();
     const obiArticles = await this.navercafeService.getArticleList({
       menuId: 347,
@@ -179,6 +183,7 @@ export class ObiService {
       await this.navercafeService.getArticle(latestArticleId);
 
     const obis = this.parseOBIData(members, weatherArticle);
+    this.logger.log(`뱅온정보 갱신 완료`);
 
     return await this.obiRepository.upsert(obis, ['id']);
   }

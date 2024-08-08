@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Waktaverse } from 'src/constants/waktaverse';
 import { SelectChannelDto } from 'src/youtube/dto/select-channel.dto';
@@ -23,11 +23,13 @@ export class MemberService {
   private readonly memberRepository: Repository<Member>;
   @Inject(YoutubeService)
   private readonly youtubeService: YoutubeService;
+  private readonly logger = new Logger(MemberService.name);
 
   /**
    * @description 멤버 전체 조회
    */
   findAll() {
+    this.logger.log('모든 멤버 조회');
     return this.memberRepository.find({
       relations: ['profile', 'livePlatform', 'youtubeChannel', 'social'],
     });
@@ -37,6 +39,7 @@ export class MemberService {
    * @description 멤버 ID로 조회
    */
   async findMemberById(id: string) {
+    this.logger.log(`멤버 조회: ${id}`);
     const [member] = await this.memberRepository.find({
       where: { id },
       relations: ['profile', 'livePlatform', 'youtubeChannel', 'social'],
@@ -53,6 +56,9 @@ export class MemberService {
    * @description 멤버 생성
    */
   createMember(createMemberDto: CreateMemberDto) {
+    this.logger.log(
+      `멤버 생성: ${createMemberDto.members.map((m) => `${m.name}(${m.role})`).join(', ')}`,
+    );
     const memberAndProfiles = createMemberDto.members.map((dto) => {
       const profile = new Profile();
       profile.id = ulid();
@@ -82,6 +88,7 @@ export class MemberService {
    * @description 멤버 전체 삭제
    */
   dropAll() {
+    this.logger.log(`모든 멤버 삭제`);
     return this.memberRepository.delete({});
   }
 
@@ -89,6 +96,7 @@ export class MemberService {
    * @description 프로필 이미지 업데이트
    */
   async updateProfileImage(updateProfileImageDto: UpdateProfileImageDto) {
+    this.logger.log(`멤버 프로필 이미지 업데이트: ${updateProfileImageDto.memberId}`);
     const member = await this.findMemberById(updateProfileImageDto.memberId);
 
     member.profile.profileImage = updateProfileImageDto.profileImage;
@@ -100,6 +108,7 @@ export class MemberService {
    * @description 생방송 오프라인 이미지 업데이트
    */
   async updateOfflineImage(updateOfflineImageDto: UpdateOfflineImageDto) {
+    this.logger.log(`멤버 생방송 오프라인 이미지 업데이트: ${updateOfflineImageDto.memberId}`);
     const member = await this.findMemberById(updateOfflineImageDto.memberId);
 
     member.profile.offlineImage = updateOfflineImageDto.offlineImage;
@@ -111,6 +120,7 @@ export class MemberService {
    * @description 생방송 플랫폼 생성
    */
   async createLivePlatform(createLivePlatformDto: CreateLivePlatformDto) {
+    this.logger.log(`멤버 생방송 오프라인 이미지 업데이트: ${createLivePlatformDto.memberId}: ${createLivePlatformDto.type}`);
     const member = await this.findMemberById(createLivePlatformDto.memberId);
 
     const livePlatform = new LivePlatform();
@@ -182,6 +192,7 @@ export class MemberService {
    * @description 왁타버스 멤버 정보 삽입
    */
   async insertWaktaverseMembers() {
+    this.logger.log(`모든 왁타버스 멤버 정보 재생성`);
     // 왁타버스 멤버 정보 가져오기
     const members = Waktaverse.map((member) => {
       const profile = new Profile();
@@ -241,6 +252,7 @@ export class MemberService {
     });
 
     await this.updateAllMemberProfileImage();
+    this.logger.log(`왁타버스 멤버 정보 재생성 완료: ${members.length}명`);
 
     return await this.findAll();
   }
@@ -249,6 +261,7 @@ export class MemberService {
    * @description 모든 멤버 프로필 이미지 갱신하기
    */
   async updateAllMemberProfileImage() {
+    this.logger.log(`모든 왁타버스 멤버 프로필 사진 갱신`);
     const members = await this.findAll();
 
     const youtubeChannel = members

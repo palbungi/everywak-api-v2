@@ -2,6 +2,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RequestDto } from 'src/fetch/dto/request.dto';
@@ -25,6 +26,8 @@ export class YoutubeService {
 
   @Inject(FetchService)
   private readonly fetchService: FetchService;
+
+  private readonly logger = new Logger(YoutubeService.name);
 
   private readonly hostname = 'https://www.googleapis.com/youtube/v3';
 
@@ -57,6 +60,7 @@ export class YoutubeService {
   }
 
   async getChannels(selectChannelDto: SelectChannelDto) {
+    this.logger.log(`채널 정보 요청: ${JSON.stringify(selectChannelDto)}`);
     const { channelId, part } = selectChannelDto;
     const pathname = `/channels`;
     const params = {
@@ -74,6 +78,7 @@ export class YoutubeService {
   }
 
   async getPlaylistItems(selectPlaylistDto: SelectPlaylistDto) {
+    this.logger.log(`재생목록 정보 요청: ${JSON.stringify(selectPlaylistDto)}`);
     const { playlistId, part, selectAll } = selectPlaylistDto;
     const pathname = `/playlistItems`;
     const params = {
@@ -120,6 +125,7 @@ export class YoutubeService {
   }
 
   async getVideos(selectVideoDto: SelectVideoDto) {
+    this.logger.log(`영상 정보 요청: ${JSON.stringify(selectVideoDto)}`);
     const { videoIds, part } = selectVideoDto;
     const pathname = `/videos`;
 
@@ -133,17 +139,23 @@ export class YoutubeService {
         key: this.configService.get('youtube.apiKey'),
       };
 
-      const response = await this.fetchService.request<VideoListResponse>(
-        new RequestDto({
-          hostname: this.hostname,
-          pathname,
-          params,
-          headers: this.headers,
-        }),
-      );
+      try {
+        const response = await this.fetchService.request<VideoListResponse>(
+          new RequestDto({
+            hostname: this.hostname,
+            pathname,
+            params,
+            headers: this.headers,
+          }),
+        );
 
-      if (response.items && response.items.length > 0) {
-        result.push(...response.items);
+        if (response.items && response.items.length > 0) {
+          result.push(...response.items);
+        }
+      } catch (err) {
+        this.logger.warn(
+          `영상 정보 로드 중 에러: ${err?.message || err?.stringify?.() || err}`,
+        );
       }
     }
     return result;
@@ -151,6 +163,7 @@ export class YoutubeService {
 
   async getStream(channelId: string): Promise<YoutubeStream> {
     try {
+      this.logger.log(`생방송 정보 요청: ${channelId}`);
       const hostname = 'https://www.youtube.com';
       const pathname = `/channel/${channelId}/live`;
 

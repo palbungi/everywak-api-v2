@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -41,19 +42,24 @@ export class MusicService {
   @Inject(YoutubeService)
   private youtubeService: YoutubeService;
 
+  private readonly logger = new Logger(MusicService.name);
+
   findAll() {
+    this.logger.verbose(`모든 뮤직 목록 조회`);
     return this.musicRepository.find({
       relations: ['video', 'singers'],
     });
   }
 
   findById(id: string) {
+    this.logger.verbose(`뮤직 조회: ${id}`);
     return this.musicRepository.findOne({
       where: { id },
     });
   }
 
   async find(dto: SearchMusicDto) {
+    this.logger.log(`뮤직 목록 조회: ${JSON.stringify(dto)}`);
     const searchTarget: Record<
       SearchTarget,
       FindOptionsWhere<Music> | FindOptionsWhere<Music>[]
@@ -83,6 +89,7 @@ export class MusicService {
   }
 
   async findChart(dto: SearchMusicChartDto) {
+    this.logger.log(`뮤직 차트 목록 조회: ${JSON.stringify(dto)}`);
     const chart = await this.musicChartRepository.find({
       where: {
         duration: dto.duration,
@@ -96,6 +103,7 @@ export class MusicService {
   }
 
   async create(dto: CreateMusicDto) {
+    this.logger.log(`뮤직 생성: ${JSON.stringify(dto)}`);
     const members = await this.memberService.findAll();
 
     const video = await this.videoService.getVideo(dto.videoId);
@@ -110,6 +118,7 @@ export class MusicService {
   }
 
   async edit(dto: UpdateMusicDto) {
+    this.logger.log(`뮤직 수정: ${JSON.stringify(dto)}`);
     const target = this.findById(dto.id);
 
     if (!target) {
@@ -130,6 +139,7 @@ export class MusicService {
   }
 
   delete(dto: DeleteMusicDto) {
+    this.logger.log(`뮤직 제거: ${JSON.stringify(dto)}`);
     return this.musicRepository.delete(dto.id);
   }
 
@@ -213,7 +223,7 @@ export class MusicService {
   }
 
   async updateMusicChart() {
-    const now = new Date();
+    this.logger.log(`뮤직 차트 목록 갱신 시작`);
     const musics = await this.findAll();
     const popularity = await this.videoService.findViewCount({
       endAt: generateDateHourString(now),
@@ -265,6 +275,7 @@ export class MusicService {
       }
     });
 
+    this.logger.log(`뮤직 차트 갱신 완료`);
     return {
       hourly: hourlyChart.length,
       _24hours: _24hoursChart.length,
@@ -275,6 +286,7 @@ export class MusicService {
   }
 
   async createMusicFromWakAllMusic() {
+    this.logger.log(`뮤직 올뮤직 자동 추가 시작`);
     const targetVideos = await this.getVideosCreateNeeded();
 
     const members = await this.memberService.findAll();
@@ -296,6 +308,9 @@ export class MusicService {
       );
     }
 
+    if (targetVideos.length > 0) {
+      this.logger.log(`뮤직 올뮤직 자동 추가: ${targetVideos.length}개`);
+    }
     return result;
   }
 

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { MemberService } from 'src/member/member.service';
@@ -28,14 +28,17 @@ export class VideoService {
   private readonly memberService: MemberService;
   @Inject(YoutubeService)
   private readonly youtubeService: YoutubeService;
+  private readonly logger = new Logger(VideoService.name);
 
   findAll() {
+    this.logger.log(`모든 영상 목록 조회`);
     return this.videoRepository.find({
       relations: ['member', 'channel'],
     });
   }
 
   async find(searchVideoDto: SearchVideoDto) {
+    this.logger.log(`영상 목록 조회: ${JSON.stringify(searchVideoDto)}`);
     const orderBy: Record<OrderBy, FindOptionsOrder<Video>> = {
       time: { publishedTimestamp: 'DESC' },
       time_oldest: { publishedTimestamp: 'ASC' },
@@ -74,6 +77,7 @@ export class VideoService {
   }
 
   async getVideo(videoId: string) {
+    this.logger.verbose(`영상 조회: ${videoId}`);
     return this.videoRepository.findOne({
       where: { videoId },
       relations: ['member', 'channel'],
@@ -81,10 +85,11 @@ export class VideoService {
   }
 
   findAllViewCount() {
+    this.logger.verbose(`모든 영상 조회수 기록 조회`);
     return this.videoViewCountRepository.find();
   }
 
-  findViewCount({ endAt }: { endAt: number }) {
+    this.logger.verbose(`영상 조회수 기록 조회: ~${endAt}`);
     return this.videoViewCountRepository.find({
       where: {
         time: LessThanOrEqual(endAt),
@@ -133,6 +138,7 @@ export class VideoService {
   }
 
   async saveViewCount() {
+    this.logger.verbose(`영상 조회수 기록 시작`);
     const videos = await this.videoRepository.find();
 
     const now = new Date();
@@ -152,17 +158,21 @@ export class VideoService {
         await manager.upsert(VideoViewCount, videoViewCountsChunk, ['id']);
       }
     });
+    this.logger.log(`영상 조회수 기록: ${dateHourString}`);
 
     return 200;
   }
 
   async updateVideos(fastUpdate: boolean = false) {
+    this.logger.log(`영상 업데이트 시작: ${fastUpdate ? '빠른 업데이트' : ''}`);
     const members = await this.memberService.findAll();
     const oldVideos = await this.findAll();
+    this.logger.verbose(`기존 영상 정보: ${oldVideos.length}개`);
     const youtubeVideos = await this.getYoutubeVideos(
       members,
       oldVideos.map((video) => video.videoId),
     );
+    this.logger.verbose(`유튜브 영상 정보: ${youtubeVideos.length}개`);
 
     const videos = youtubeVideos.map((video) => {
       const member = members.find((member) =>
@@ -201,6 +211,7 @@ export class VideoService {
       }
     });
     await this.saveViewCount();
+    this.logger.log(`영상 업데이트 완료`);
 
     return videos.length;
   }

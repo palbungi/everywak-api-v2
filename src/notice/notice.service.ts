@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MemberService } from 'src/member/member.service';
 import { SelectArticleListDto } from 'src/navercafe/dto/select-article-list.dto';
@@ -15,12 +15,15 @@ export class NoticeService {
   private navercafeService: NavercafeService;
   @Inject(MemberService)
   private memberService: MemberService;
+  private readonly logger = new Logger(NoticeService.name);
 
   findAll() {
+    this.logger.verbose(`모든 멤버 공지사항 목록 조회`);
     return this.memberNoticeRepository.find();
   }
 
   find(dto: SearchMemberNoticeDto) {
+    this.logger.log(`멤버 공지사항 목록 조회: ${JSON.stringify(dto)}`);
     return this.memberNoticeRepository.find({
       where: {
         member: {
@@ -35,6 +38,7 @@ export class NoticeService {
   }
 
   async update() {
+    this.logger.log(`멤버 공지사항 목록 갱신 시작`);
     const noticeArticles = [
       ...(
         await this.navercafeService.getArticleList(
@@ -75,6 +79,7 @@ export class NoticeService {
           upCount: article.likeItCount,
         }),
     );
+    this.logger.log(`멤버 공지사항 목록 갱신 완료`);
 
     return await this.memberNoticeRepository.upsert(notices, ['articleId']);
   }

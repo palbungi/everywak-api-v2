@@ -1,19 +1,20 @@
 import { HttpService } from '@nestjs/axios';
-import {
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { lastValueFrom, map, Observable } from 'rxjs';
 import { RequestDto } from './dto/request.dto';
-require('dnscache')({ enable: true })
+require('dnscache')({ enable: true });
 
 @Injectable()
 export class FetchService {
   @Inject(HttpService)
   private readonly httpService: HttpService;
+  private readonly logger = new Logger(FetchService.name);
 
   async request<T>(dto: RequestDto): Promise<T> {
+    this.logger.verbose(
+      `요청: ${dto.method} ${dto.hostname}${dto.pathname}${dto.params ? `?${new URLSearchParams(dto.params).toString()}` : ''}`,
+    );
     const url = dto.hostname + dto.pathname;
     const body = dto.body ?? {};
     const config = {

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AfreecaService } from 'src/afreeca/afreeca.service';
 import { Member } from 'src/member/entities/member.entity';
@@ -17,20 +17,24 @@ export class LiveService {
   private readonly memberService: MemberService;
   @Inject(AfreecaService)
   private readonly afreecaService: AfreecaService;
+  private readonly logger = new Logger(LiveService.name);
 
   findLiveAll(): Promise<Live[]> {
+    this.logger.log('모든 생방송 목록 조회');
     return this.liveRepository.find({
       relations: ['livePlatform'],
     });
   }
 
   findLiveChangeAll(): Promise<LiveChange[]> {
+    this.logger.log('모든 생방송 변동사항 목록 조회');
     return this.liveChangeRepository.find({
       relations: ['livePlatform'],
     });
   }
 
   async findLiveByMemberId(memberId: string) {
+    this.logger.log(`생방송 조회: ${memberId}`);
     const member = await this.memberService.findMemberById(memberId);
 
     return this.liveRepository.find({
@@ -81,10 +85,17 @@ export class LiveService {
 
         lives.push(newLive);
       } catch (error) {
+        this.logger.warn(
+          `아프리카 생방송 정보 조회 중 오류: ${afreecaChannel.channelId} ${JSON.stringify(error)}`,
+        );
+
         console.error(error);
         throw error;
       }
     }
+    this.logger.log(
+      `아프리카 생방송 정보: ${lives.length}/${afreecaChannels.length}명`,
+    );
     return lives;
   }
 
@@ -179,6 +190,7 @@ export class LiveService {
   }
 
   async updateWaktaverseLive() {
+    this.logger.log('왁타버스 생방송 목록 갱신 시작');
     const members = await this.memberService.findAll();
 
     if (members.length === 0) {
@@ -205,6 +217,7 @@ export class LiveService {
     const liveChanges = this.compareLives(oldLivesFixed, newLives);
     await this.liveChangeRepository.upsert(liveChanges, ['id']);
 
+    this.logger.log('왁타버스 생방송 정보 갱신 완료');
     return newLives;
   }
 }
