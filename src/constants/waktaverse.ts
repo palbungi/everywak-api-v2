@@ -697,6 +697,11 @@ export const Waktaverse: Member[] = [
     role: 'gomem',
     lives: [
       {
+        type: 'afreeca',
+        name: 'w96idqb',
+        id: 'w96idqb',
+      },
+      {
         type: 'twitch',
         name: 'haku_0089_',
         id: '727383392',
@@ -776,6 +781,11 @@ export const Waktaverse: Member[] = [
     name: '캘리칼리 데이비슨',
     role: 'gomem',
     lives: [
+      {
+        type: 'afreeca',
+        name: 'chronicleyul',
+        id: 'chronicleyul',
+      },
       {
         type: 'twitch',
         name: 'invenxd',
