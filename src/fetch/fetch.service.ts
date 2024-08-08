@@ -6,6 +6,7 @@ import {
 import { AxiosResponse } from 'axios';
 import { lastValueFrom, map, Observable } from 'rxjs';
 import { RequestDto } from './dto/request.dto';
+require('dnscache')({ enable: true })
 
 @Injectable()
 export class FetchService {
