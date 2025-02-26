@@ -285,7 +285,7 @@ export class MemberService {
     this.logger.log(`모든 왁타버스 멤버 프로필 사진 갱신`);
     const members = await this.findAll();
 
-    const youtubeChannel = members
+    const youtubeChannels = members
       .map((member) => {
         const mainChannel = member.youtubeChannel?.find(
           (channel) => channel.type === 'main',
@@ -300,21 +300,23 @@ export class MemberService {
       })
       .filter((channel) => channel);
 
-    const channels = await this.youtubeService.getChannels(
-      new SelectChannelDto(youtubeChannel.map((channel) => channel.channelId)),
+    const resYoutubeChannels = await this.youtubeService.getChannels(
+      new SelectChannelDto(youtubeChannels.map((channel) => channel.channelId)),
     );
 
     await this.memberRepository.manager.transaction(
       async (transactionalEntityManager) => {
         for (const member of members) {
-          const channel =
-            channels.items[
-              youtubeChannel.findIndex((c) => c.memberId === member.id)
-            ];
-          if (channel) {
+          const memberMainYoutube = youtubeChannels.find(
+            (channel) => channel.memberId === member.id,
+          );
+          const youtube = resYoutubeChannels.items.find(
+            (item) => item.id === memberMainYoutube?.channelId,
+          );
+          if (youtube) {
             // 유튜브 채널이 존재할 경우
             member.profile.profileImage =
-              channel.snippet.thumbnails.default.url;
+              youtube.snippet.thumbnails.default.url;
           } else if (
             member.livePlatform.find((platform) => platform.type === 'afreeca')
           ) {
