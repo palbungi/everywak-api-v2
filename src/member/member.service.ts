@@ -206,6 +206,7 @@ export class MemberService {
         try {
           const oldMemberEntry = await this.findMemberById(member.id);
           memberEntity = oldMemberEntry;
+          memberEntity.name = member.name;
         } catch (e) {
           memberEntity = new Member({
             id: member.id,
