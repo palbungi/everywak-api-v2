@@ -34,13 +34,14 @@ export const SocialEnum: ReadonlyRecord<SocialType> = {
   tiktok: 'tiktok',
 };
 
-export type Role = 'master' | 'isedol' | 'family' | 'gomem' | 'academy';
+export type Role = 'master' | 'isedol' | 'family' | 'gomem' | 'academy' | 'hardcore';
 
 export const RoleEnum: ReadonlyRecord<Role> = {
   master: 'master',
   isedol: 'isedol',
   gomem: 'gomem',
   academy: 'academy',
+  hardcore: 'hardcore',
   family: 'family',
 };
 
@@ -108,10 +109,16 @@ export const Waktaverse: Member[] = [
         uploads: 'UUzh4yY8rl38knH33XpNqXbQ',
       },
       {
-        name: '돚거',
+        name: '왁타버스 제로',
         type: 'clip',
         id: 'UCZOcwheypMvYN_J2oRBgt2A',
         uploads: 'UUZOcwheypMvYN_J2oRBgt2A',
+      },
+      {
+        name: '우왁굳의 종합게임',
+        type: 'sub',
+        id: 'UChCqDNXQddSr0ncjs_78duA',
+        uploads: 'UUhCqDNXQddSr0ncjs_78duA',
       },
     ],
     socials: [
@@ -214,7 +221,7 @@ export const Waktaverse: Member[] = [
         uploads: 'UU-S9NE-xzcBpxOFSvsmOzAA',
       },
       {
-        name: '다시보기',
+        name: '츠쿠요미',
         type: 'replay',
         id: 'UCrN7Gb8xIZF_0ZYA1cmVNxQ',
         uploads: 'UUrN7Gb8xIZF_0ZYA1cmVNxQ',
@@ -274,7 +281,7 @@ export const Waktaverse: Member[] = [
         uploads: 'UU-oCJP9t47v7-DmsnmXV38Q',
       },
       {
-        name: '꼬꼬',
+        name: '순간들',
         type: 'clip',
         id: 'UC8dEJs2kpS5x2vI1X7aaUhA',
         uploads: 'UU8dEJs2kpS5x2vI1X7aaUhA',
@@ -402,13 +409,13 @@ export const Waktaverse: Member[] = [
         uploads: 'UUV9WL7sW6_KjanYkUUaIDfQ',
       },
       {
-        name: '좀더',
+        name: '짧은거',
         type: 'clip',
         id: 'UCSSPlgcyDA5eoN3hrkXpvHg',
         uploads: 'UUSSPlgcyDA5eoN3hrkXpvHg',
       },
       {
-        name: '다시보기',
+        name: '밥친구',
         type: 'replay',
         id: 'UCc4qGj6d8LBXW2qZ9GZQWqQ',
         uploads: 'UUc4qGj6d8LBXW2qZ9GZQWqQ',
@@ -470,7 +477,7 @@ export const Waktaverse: Member[] = [
         uploads: 'UUuJUfqThFp5-k-lrHcO1dFg',
       },
       {
-        name: '다시보기',
+        name: '무릉도원',
         type: 'replay',
         id: 'UCk2vPN7LATiMz_r8VUiA0KQ',
         uploads: 'UUk2vPN7LATiMz_r8VUiA0KQ',
@@ -516,6 +523,11 @@ export const Waktaverse: Member[] = [
     youtube: [],
     socials: [
       {
+        type: 'cafe',
+        name: 'dldus2430',
+        id: '9bNWYMtcwoY6LzORvkv4AA',
+      },
+      {
         type: 'twitter',
         name: 'chunyangkr',
         id: '1668740261328097280',
@@ -545,6 +557,11 @@ export const Waktaverse: Member[] = [
     youtube: [],
     socials: [
       {
+        type: 'cafe',
+        name: 'jey422',
+        id: '3nS2SUrY0hg4aj7NHoqy8g',
+      },
+      {
         type: 'twitter',
         name: 'rtgn111',
         id: '705059862170832896',
@@ -571,6 +588,14 @@ export const Waktaverse: Member[] = [
         id: '686366264',
       },
     ],
+    youtube: [],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'kingstate123',
+        id: 'dmzmNtHPqhKT66qc9O3Idg',
+      },
+    ],
   },
   {
     id: '01HTZ05GK99J8C2DXBP0H9EY3G',
@@ -586,6 +611,14 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'secretmemolee',
         id: '691305503',
+      },
+    ],
+    youtube: [],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'mkhwa12',
+        id: 'em8P7gPkEC0xnKf1i-lBUw',
       },
     ],
   },
@@ -605,6 +638,14 @@ export const Waktaverse: Member[] = [
         id: '55452641',
       },
     ],
+    youtube: [],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'sangsoak',
+        id: '0H9flIcB6dYOeTmN6PH4MA',
+      },
+    ],
   },
   {
     id: '01HTZ05RVGRSGZPSMXGMN1BW23',
@@ -620,6 +661,14 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'hikiking0',
         id: '637081198',
+      },
+    ],
+    youtube: [],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'slem_i',
+        id: 'YIzqsOrv0ceegCc6A3STdw',
       },
     ],
   },
@@ -639,6 +688,13 @@ export const Waktaverse: Member[] = [
         id: '688493905',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'djdj00824',
+        id: '6yVccjXPFv_pS9UnmKFFqA',
+      },
+    ],
   },
   {
     id: '01HTZ05YARFEPN0HJMD36T6EM6',
@@ -654,6 +710,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'dokkhye_',
         id: '726101394',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'dokkhye_',
+        id: 'pp8YQn6nQWzX_sl1VnPaEw',
       },
     ],
   },
@@ -673,6 +736,13 @@ export const Waktaverse: Member[] = [
         id: '724476973',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'qwer50311',
+        id: 'V692ukwzbWWS5u1SAaE7Ow',
+      },
+    ],
   },
   {
     id: '01HTZ067S75SFN4YPMKPEXAEMW',
@@ -688,6 +758,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: '2ducksoo',
         id: '694571266',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'nightmandu1234',
+        id: '_S6ONLYWD-KwP27X0aOB7g',
       },
     ],
   },
@@ -707,6 +784,13 @@ export const Waktaverse: Member[] = [
         id: '727383392',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'myaron9709',
+        id: 'GYEvGI4kJl_-PdOl7WWWeA',
+      },
+    ],
   },
   {
     id: '01HTZ06JE9N8Y7JGY5HHX9ZK48',
@@ -722,6 +806,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'businesskim111',
         id: '692399509',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'rlawjdtlr444',
+        id: '5iriL01Muz_Nn8kyT3SSDA',
       },
     ],
   },
@@ -741,10 +832,17 @@ export const Waktaverse: Member[] = [
         id: '776127800',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'tanglecell',
+        id: 'pGZRtq-dDgrw9oQavOhpeg',
+      },
+    ],
   },
   {
     id: '01HTZ0706HJ9A1RXQ0H6J30BAA',
-    name: '프리터',
+    name: '바이터',
     role: 'gomem',
     lives: [
       {
@@ -756,6 +854,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'freeter1999',
         id: '757269147',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'lssj0305',
+        id: 'Wfu7vhyqa4k22No4cZ_mXA',
       },
     ],
   },
@@ -775,6 +880,13 @@ export const Waktaverse: Member[] = [
         id: '495411373',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'cman0327',
+        id: '4_3leHLMSbdHOrsJQUb3ig',
+      },
+    ],
   },
   {
     id: '01HTZ077QHVZDFHMTWR4ANM56W',
@@ -790,6 +902,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'invenxd',
         id: '708871268',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'madmad5',
+        id: 'Z_ug1ZX4oIH-cLOrl4A4BQ',
       },
     ],
   },
@@ -809,6 +928,13 @@ export const Waktaverse: Member[] = [
         id: '529929528',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'jhjihoo2',
+        id: 'zw09IEZx8fYSgj4YAOny5w',
+      },
+    ],
   },
   {
     id: '01HTZ07E1AMCTKW0E46V689ZJ8',
@@ -824,6 +950,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'realchunshik',
         id: '171950282',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'yes6695',
+        id: 'U7H6xCuqqm98tIrMI8-V0Q',
       },
     ],
   },
@@ -843,6 +976,13 @@ export const Waktaverse: Member[] = [
         id: '693895624',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'kim2281128',
+        id: 'nGFTXp2VowjvXgZJnZb5QQ',
+      },
+    ],
   },
   {
     id: '01HTZ07KVJHZ7TXB8B9SK7V83Y',
@@ -858,6 +998,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'kwonmin98',
         id: '689539974',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'kisukwon98',
+        id: '4xi7FarPpBXVK0tU5L8uiw',
       },
     ],
   },
@@ -877,6 +1024,13 @@ export const Waktaverse: Member[] = [
         id: '833390409',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'lll1419',
+        id: 'iQgngYB-fw-YL6XAhvZ_tA',
+      },
+    ],
   },
   {
     id: '01HTZ07SS1XGQT66JYA5066MXH',
@@ -892,6 +1046,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'bujungingan',
         id: '147540755',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'bujungingan',
+        id: 'qJTyM9laoJ4dKYDyNoImTw',
       },
     ],
   },
@@ -911,6 +1072,13 @@ export const Waktaverse: Member[] = [
         id: '833726111',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'nininin_',
+        id: 'GOjQfCMnVnG9NVsQVTuJdg',
+      },
+    ],
   },
   {
     id: '01HTZ081BSEANMPB8BTHY7CEPN',
@@ -926,6 +1094,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'bodyguard365',
         id: '921595171',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'lgyoochs',
+        id: 'OJBFHo9qW0XsKldQsIHshA',
       },
     ],
   },
@@ -945,6 +1120,13 @@ export const Waktaverse: Member[] = [
         id: '913218793',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'sirian_sps',
+        id: 'vYaczNVti51uUgdZ55DWLA',
+      },
+    ],
   },
   {
     id: '01HTZ0870J8TXY1B9STTS9HZ9A',
@@ -960,6 +1142,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'amadeus_choi_twitch',
         id: '475399891',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'monkeynight2',
+        id: 'L5-_Ve_qS8DP7FEZPnt3Ag',
       },
     ],
   },
@@ -979,6 +1168,13 @@ export const Waktaverse: Member[] = [
         id: '496948926',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'dkfusry',
+        id: 'g9Uesu0Y2TDYbxWCOUrxUw',
+      },
+    ],
   },
   {
     id: '01HTZ08CTJR15V6KQFA76AQ389',
@@ -994,6 +1190,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'sullivan_pirate',
         id: '850573153',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'hiimgarp',
+        id: 'CyY79bZUCGfu6lAL-6hebg',
       },
     ],
   },
@@ -1013,6 +1216,13 @@ export const Waktaverse: Member[] = [
         id: '902414237',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'dlepffld852',
+        id: 'b_DkKJUJwVQuv4X3FkZzlw',
+      },
+    ],
   },
   {
     id: '01HTZ08NASAEKG4JRT6VSH869B',
@@ -1028,6 +1238,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'soosemi432',
         id: '886072449',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'thornses23',
+        id: 'ZIEZUOY4TlqoR_wHcADlEw',
       },
     ],
   },
@@ -1047,6 +1264,13 @@ export const Waktaverse: Member[] = [
         id: '913230860',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'gilbet1801',
+        id: 'StZWwA97YDOvPhkZN3idFg',
+      },
+    ],
   },
   {
     id: '01HTZ08V3AAMP2G4CR69YTS46R',
@@ -1062,6 +1286,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'mimi_chanchan_',
         id: '906828548',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: '1574cat',
+        id: 'tHgxHzPLuJlxwQSW3RmDCQ',
       },
     ],
   },
@@ -1081,6 +1312,13 @@ export const Waktaverse: Member[] = [
         id: '913218759',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'tgb_plant',
+        id: 'jV_7B_N98_wI_VKnIGa40g',
+      },
+    ],
   },
   {
     id: '01HTZ090B9VV4Y4QJXNS5J2MGQ',
@@ -1096,6 +1334,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'deathhammer_',
         id: '937121095',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'deathhammer',
+        id: 'CU_beo26pSFQX3UaMmnxaQ',
       },
     ],
   },
@@ -1115,6 +1360,13 @@ export const Waktaverse: Member[] = [
         id: '932882108',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'never_1234',
+        id: '9NaYPzulwQeXuAAcXlpFhw',
+      },
+    ],
   },
   {
     id: '01HTZ095JJKSWE8EN0WQBR7NVQ',
@@ -1130,6 +1382,13 @@ export const Waktaverse: Member[] = [
         type: 'twitch',
         name: 'icekkekki',
         id: '938325961',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'bbongfar',
+        id: 'DPevjMoUL8p8Meev7ABrLw',
       },
     ],
   },
@@ -1149,6 +1408,13 @@ export const Waktaverse: Member[] = [
         id: '985416673',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'sl_0724',
+        id: 'Rd2yiwnXvedaP6kb38nDJg',
+      },
+    ],
   },
   {
     id: '01HTZ09BGTK8G90G4RHXE685F9',
@@ -1166,6 +1432,13 @@ export const Waktaverse: Member[] = [
         id: '934896936',
       },
     ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'butterusiii',
+        id: 'OBvrBhAAakJl0Ablyz3Cpg',
+      },
+    ],
   },
   {
     id: '01HV28Y32XTQ9GSRWQAFK35YNZ',
@@ -1176,6 +1449,13 @@ export const Waktaverse: Member[] = [
         type: 'afreeca',
         name: 'maenggisan',
         id: 'maenggisan',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'meen308',
+        id: 'YmEct7wpqzv3Fkoy9bzxMg',
       },
     ],
   },
