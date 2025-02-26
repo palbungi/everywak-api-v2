@@ -189,66 +189,78 @@ export class MemberService {
   }
 
   /**
-   * @description 왁타버스 멤버 정보 삽입
+   * @description 왁타버스 멤버 정보 업데이트
    */
-  async insertWaktaverseMembers() {
+  async updateWaktaverseMembers() {
     this.logger.log(`모든 왁타버스 멤버 정보 재생성`);
     // 왁타버스 멤버 정보 가져오기
-    const members = Waktaverse.map((member) => {
-      const profile = new Profile();
-      profile.id = ulid();
+    const members = await Promise.all(
+      Waktaverse.map(async (member) => {
+        let memberEntity: Member;
+        try {
+          const oldMemberEntry = await this.findMemberById(member.id);
+          memberEntity = oldMemberEntry;
+        } catch (e) {
+          const profile = new Profile();
+          profile.id = ulid();
 
-      const memberEntity = new Member({
-        id: member.id,
-        name: member.name,
-        role: member.role,
-        profile,
-      });
+          memberEntity = new Member({
+            id: member.id,
+            name: member.name,
+            role: member.role,
+            profile,
+          });
+        }
 
-      memberEntity.livePlatform = member.lives.map((platform) => {
-        const livePlatformEntity = new LivePlatform();
-        livePlatformEntity.id = member.id;
-        livePlatformEntity.type = platform.type;
-        livePlatformEntity.name = platform.name;
-        livePlatformEntity.channelId = platform.id;
-        livePlatformEntity.member = memberEntity;
+        memberEntity.livePlatform = member.lives.map((platform) => {
+          const livePlatformEntity = new LivePlatform();
+          livePlatformEntity.id = member.id;
+          livePlatformEntity.type = platform.type;
+          livePlatformEntity.name = platform.name;
+          livePlatformEntity.channelId = platform.id;
+          livePlatformEntity.member = memberEntity;
 
-        return livePlatformEntity;
-      });
-
-      memberEntity.youtubeChannel = member.youtube?.map((channel) => {
-        const youtubeChannelEntity = new YoutubeChannel();
-        youtubeChannelEntity.id = member.id;
-        youtubeChannelEntity.type = channel.type;
-        youtubeChannelEntity.name = channel.name;
-        youtubeChannelEntity.channelId = channel.id;
-        youtubeChannelEntity.uploads = channel.uploads;
-        youtubeChannelEntity.member = memberEntity;
-
-        return youtubeChannelEntity;
-      });
-
-      memberEntity.social = member.socials?.map((social) => {
-        const socialEntity = new Social({
-          id: member.id,
-          type: social.type,
-          name: social.name,
-          userId: social.id ?? social.name,
-          member: memberEntity,
+          return livePlatformEntity;
         });
 
-        return socialEntity;
-      });
+        memberEntity.youtubeChannel = member.youtube?.map((channel) => {
+          const youtubeChannelEntity = new YoutubeChannel();
+          youtubeChannelEntity.id = member.id;
+          youtubeChannelEntity.type = channel.type;
+          youtubeChannelEntity.name = channel.name;
+          youtubeChannelEntity.channelId = channel.id;
+          youtubeChannelEntity.uploads = channel.uploads;
+          youtubeChannelEntity.member = memberEntity;
 
-      return memberEntity;
-    });
+          return youtubeChannelEntity;
+        });
+
+        memberEntity.social = member.socials?.map((social) => {
+          const socialEntity = new Social({
+            id: member.id,
+            type: social.type,
+            name: social.name,
+            userId: social.id ?? social.name,
+            member: memberEntity,
+          });
+
+          return socialEntity;
+        });
+
+        return memberEntity;
+      }),
+    );
 
     await this.memberRepository.manager.transaction(async (manager) => {
-      // 기존 데이터 삭제
-      await this.dropAll();
-
       // 멤버 정보 저장
       await manager.save(members);
+
+      // 삭제된 멤버 삭제
+      const _members = await this.findAll();
+      const deletedMembers = _members.filter(
+        (member) => !members.find((m) => m.id === member.id),
+      );
+      await manager.remove(deletedMembers);
     });
 
     await this.updateAllMemberProfileImage();

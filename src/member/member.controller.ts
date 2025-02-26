@@ -12,7 +12,7 @@ export class MemberController {
 
   @Get('/setup')
   setupMember() {
-    return this.memberService.insertWaktaverseMembers();
+    return this.memberService.updateWaktaverseMembers();
   }
 
   @Get('/list')
