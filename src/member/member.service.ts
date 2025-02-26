@@ -96,7 +96,9 @@ export class MemberService {
    * @description 프로필 이미지 업데이트
    */
   async updateProfileImage(updateProfileImageDto: UpdateProfileImageDto) {
-    this.logger.log(`멤버 프로필 이미지 업데이트: ${updateProfileImageDto.memberId}`);
+    this.logger.log(
+      `멤버 프로필 이미지 업데이트: ${updateProfileImageDto.memberId}`,
+    );
     const member = await this.findMemberById(updateProfileImageDto.memberId);
 
     member.profile.profileImage = updateProfileImageDto.profileImage;
@@ -108,7 +110,9 @@ export class MemberService {
    * @description 생방송 오프라인 이미지 업데이트
    */
   async updateOfflineImage(updateOfflineImageDto: UpdateOfflineImageDto) {
-    this.logger.log(`멤버 생방송 오프라인 이미지 업데이트: ${updateOfflineImageDto.memberId}`);
+    this.logger.log(
+      `멤버 생방송 오프라인 이미지 업데이트: ${updateOfflineImageDto.memberId}`,
+    );
     const member = await this.findMemberById(updateOfflineImageDto.memberId);
 
     member.profile.offlineImage = updateOfflineImageDto.offlineImage;
@@ -120,7 +124,9 @@ export class MemberService {
    * @description 생방송 플랫폼 생성
    */
   async createLivePlatform(createLivePlatformDto: CreateLivePlatformDto) {
-    this.logger.log(`멤버 생방송 오프라인 이미지 업데이트: ${createLivePlatformDto.memberId}: ${createLivePlatformDto.type}`);
+    this.logger.log(
+      `멤버 생방송 오프라인 이미지 업데이트: ${createLivePlatformDto.memberId}: ${createLivePlatformDto.type}`,
+    );
     const member = await this.findMemberById(createLivePlatformDto.memberId);
 
     const livePlatform = new LivePlatform();
@@ -201,15 +207,17 @@ export class MemberService {
           const oldMemberEntry = await this.findMemberById(member.id);
           memberEntity = oldMemberEntry;
         } catch (e) {
-          const profile = new Profile();
-          profile.id = ulid();
-
           memberEntity = new Member({
             id: member.id,
             name: member.name,
             role: member.role,
-            profile,
           });
+        } finally {
+          const profile = new Profile();
+          profile.id = ulid();
+          if (!memberEntity.profile) {
+            memberEntity.profile = profile;
+          }
         }
 
         memberEntity.livePlatform = member.lives.map((platform) => {
