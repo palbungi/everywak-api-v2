@@ -10,7 +10,7 @@ export class AfreecaService {
   private readonly fetchService: FetchService;
   private readonly logger = new Logger(AfreecaService.name);
 
-  private readonly hostname = 'http://bjapi.afreecatv.com';
+  private readonly hostname = 'http://bjapi.sooplive.co.kr';
 
   private readonly headers = {
     'User-Agent': 'Mozilla/5.0',
@@ -19,7 +19,7 @@ export class AfreecaService {
 
   async getStation(channelId: string) {
     this.logger.verbose(`방송국: ${channelId}`);
-    const hostname = 'http://bjapi.afreecatv.com';
+    const hostname = 'http://bjapi.sooplive.co.kr';
     const pathname = `/api/${channelId}/station`;
     return await this.fetchService.request<Station>(
       new RequestDto({ hostname, pathname, headers: this.headers }),
@@ -29,7 +29,7 @@ export class AfreecaService {
   async getStream(selectStreamDto: SelectStreamDto) {
     this.logger.log(`생방송: ${selectStreamDto.channelId}`);
     const method = 'POST';
-    const hostname = 'https://live.afreecatv.com';
+    const hostname = 'https://live.sooplive.co.kr';
     const pathname = `/afreeca/player_live_api.php`;
     const params = { bjid: selectStreamDto.channelId };
     const body = {
@@ -55,7 +55,7 @@ export class AfreecaService {
 
   async getSignatureEmotes(channelId: string) {
     this.logger.verbose(`구독 이모티콘: ${channelId}`);
-    const hostname = 'https://live.afreecatv.com';
+    const hostname = 'https://live.sooplive.co.kr';
     const pathname = `/api/signature_emoticon_api.php`;
     const params = { work: 'list', szBjId: channelId };
     return await this.fetchService.request<SignatureEmoteResponse>(

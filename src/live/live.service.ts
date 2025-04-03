@@ -76,7 +76,7 @@ export class LiveService {
         newLive.title = stream.CHANNEL.TITLE;
         newLive.videoId = stream.CHANNEL.BNO;
         newLive.chatId = `wss://${stream.CHANNEL.CHDOMAIN.toLowerCase()}:${parseInt(stream.CHANNEL.CHPT) + 1}/Websocket/${stream.CHANNEL.BJID}`;
-        newLive.thumbnail = `https://liveimg.afreecatv.com/h/${stream.CHANNEL.BNO}.webp`;
+        newLive.thumbnail = `https://liveimg.sooplive.co.kr/h/${stream.CHANNEL.BNO}.webp`;
         newLive.viewerCount = station.broad.current_sum_viewer;
         newLive.startedTimestamp = new Date(
           (Math.floor(Date.now() / 1000) - stream.CHANNEL.BTIME) * 1000,

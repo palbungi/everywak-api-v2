@@ -324,7 +324,7 @@ export class MemberService {
             const afreecaChannel = member.livePlatform.find(
               (platform) => platform.type === 'afreeca',
             );
-            member.profile.profileImage = `https://profile.img.afreecatv.com/LOGO/${afreecaChannel.name.slice(0, 2)}/${afreecaChannel.name}/${afreecaChannel.name}.jpg`;
+            member.profile.profileImage = `https://profile.img.sooplive.co.kr/LOGO/${afreecaChannel.name.slice(0, 2)}/${afreecaChannel.name}/${afreecaChannel.name}.jpg`;
           } else {
             // 프로필 이미지가 없을 경우
             continue;
