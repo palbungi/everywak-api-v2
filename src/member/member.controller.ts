@@ -1,8 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { SelectMemberDto } from './dto/select-member.dto';
 import { MemberService } from './member.service';
 
