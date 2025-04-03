@@ -1,10 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { LiveService } from './live.service';
 
 @Controller('live')
 export class LiveController {
   constructor(private readonly liveService: LiveService) {}
+  private readonly logger = new Logger(LiveController.name);
 
   @Get()
   getLiveAll() {
@@ -31,6 +32,11 @@ export class LiveController {
     timeZone: 'Asia/Seoul',
   })
   automatelyUpdate() {
-    return this.liveService.updateWaktaverseLive();
+    try {
+      return this.liveService.updateWaktaverseLive();
+    } catch (e) {
+      this.logger.error(e);
+      console.error(e);
+    }
   }
 }

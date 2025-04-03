@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InsertSeriesDto } from './dto/insert-series.dto';
 import { SearchAuthorDto } from './dto/search-author.dto';
@@ -9,9 +9,8 @@ import { WaktoonService } from './waktoon.service';
 
 @Controller('waktoon')
 export class WaktoonController {
-  constructor(
-    private readonly waktoonService: WaktoonService,
-  ) {}
+  constructor(private readonly waktoonService: WaktoonService) {}
+  private readonly logger = new Logger(WaktoonController.name);
 
   @Get('articles')
   findAll() {
@@ -72,7 +71,11 @@ export class WaktoonController {
   // 한 시간에 한 번 게시글/에피소드/시리즈/차트 갱신
   @Cron('1 * * * *')
   updateWaktoonCron() {
-    return this.waktoonService.updateWaktoon();
+    try {
+      return this.waktoonService.updateWaktoon();
+    } catch (e) {
+      this.logger.error(e);
+      console.error(e);
+    }
   }
-
 }
