@@ -1,13 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { BestwakkiService } from './bestwakki.service';
 import { SearchArticleDto } from './dto/search-article.dto';
 
 @Controller('bestwakki')
 export class BestwakkiController {
-  constructor(
-    private readonly bestwakkiService: BestwakkiService,
-  ) {}
+  constructor(private readonly bestwakkiService: BestwakkiService) {}
 
   @Get()
   findAll() {
