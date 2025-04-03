@@ -222,15 +222,19 @@ export type StreamInfoOffline = {
 export type SubscriptionBadge = {
   MONTH: number;
   FILENAME: string;
-}
+};
 
 export type SignatureEmoteResponse = {
-  result: number;
+  result: 1;
   data: SignatureEmote[];
+  img_path: string;
+  tier_type: number;
+  version: number;
 };
 
 export type SignatureEmote = {
   title: string;
+  tier_type: 1 | 2 | 3;
   pc_img: string;
   mobile_img: string;
   pc_alternate_img: string;
