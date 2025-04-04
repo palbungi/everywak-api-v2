@@ -10,7 +10,7 @@ export class AfreecaService {
   private readonly fetchService: FetchService;
   private readonly logger = new Logger(AfreecaService.name);
 
-  private readonly hostname = 'http://chapi.afreecatv.com';
+  private readonly hostname = 'http://chapi.sooplive.co.kr';
 
   private readonly headers = {
     'User-Agent': 'Mozilla/5.0',
@@ -19,7 +19,7 @@ export class AfreecaService {
 
   async getStation(channelId: string) {
     this.logger.verbose(`방송국: ${channelId}`);
-    const hostname = 'http://chapi.afreecatv.com';
+    const hostname = 'http://chapi.sooplive.co.kr';
     const pathname = `/api/${channelId}/station`;
     return await this.fetchService.request<Station>(
       new RequestDto({ hostname, pathname, headers: this.headers }),
