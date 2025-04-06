@@ -6,3 +6,6 @@ export function generateDateHourString(date: Date) {
 
   return parseInt(`${year * 1000000 + month * 10000 + day * 100 + hour}`);
 }
+
+export const wait = (timeToDelay: number) =>
+  new Promise((resolve) => setTimeout(resolve, timeToDelay));

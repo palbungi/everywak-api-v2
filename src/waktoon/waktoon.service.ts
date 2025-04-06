@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NavercafeService } from 'src/navercafe/navercafe.service';
-import { generateDateHourString } from 'src/util/functions';
+import { generateDateHourString, wait } from 'src/util/functions';
 import {
   FindOptionsOrder,
   FindOptionsWhere,
@@ -99,7 +99,7 @@ export class WaktoonService {
     if (!dto.duration) {
       throw new BadRequestException('duration is required');
     }
-    
+
     const orderBy: Record<
       EpisodeChartOrderBy,
       FindOptionsOrder<WaktoonEpisodeChart>
@@ -270,9 +270,7 @@ export class WaktoonService {
     });
   }
 
-  async saveEpisodePopularity() {
-    const episodes = await this.findAllEpisodes();
-
+  async saveEpisodePopularity(episodes: WaktoonEpisode[]) {
     const now = new Date();
     const dateHourString = generateDateHourString(now);
     const episodePopularities = episodes.map((episode) => {
@@ -291,6 +289,7 @@ export class WaktoonService {
         while (episodePopularities.length > 0) {
           const chunk = episodePopularities.splice(0, 1000);
           await manager.upsert(WaktoonEpisodePopularity, chunk, ['id']);
+          await wait(100);
         }
       },
     );
@@ -359,19 +358,17 @@ export class WaktoonService {
         const chunk = articles.splice(0, 500);
         await manager.upsert(WaktoonArticle, chunk, ['articleId']);
       }
+      await wait(100);
     });
 
     return {
-      author: (await this.findAllAuthors()).length,
-      article: (await this.findAllArticles()).length,
+      author: authors.length,
+      article: articles.length,
       skipped,
     };
   }
 
-  async updateEpisodes() {
-    const articles = await this.findAllArticles();
-    const episodes = await this.findAllEpisodes();
-
+  async updateEpisodes(articles: WaktoonArticle[], episodes: WaktoonEpisode[]) {
     // 에피소드가 생성되지 않은 게시글
     const newEpisodes = articles
       .filter((a) => !episodes.find((e) => e.article.articleId === a.articleId))
@@ -586,8 +583,7 @@ export class WaktoonService {
     return await this.waktoonSeriesRepository.save(series);
   }
 
-  async updateSeries() {
-    const episodes = await this.findAllEpisodes();
+  async updateSeries(episodes: WaktoonEpisode[]) {
     const series = await this.findAllSeries();
 
     series.forEach((s) => {
@@ -650,9 +646,14 @@ export class WaktoonService {
   async updateWaktoon() {
     const resultArticle = await this.updateArticles();
 
-    const resultEpisode = await this.updateEpisodes();
-    const resultPopularity = await this.saveEpisodePopularity();
-    const resultSeries = await this.updateSeries();
+    const articles = await this.findAllArticles();
+    const episodes = await this.findAllEpisodes();
+    const resultEpisode = await this.updateEpisodes(articles, episodes);
+
+    const updatedEpisodes = await this.findAllEpisodes();
+    const resultPopularity = await this.saveEpisodePopularity(updatedEpisodes);
+    const resultSeries = await this.updateSeries(updatedEpisodes);
+
     const resultChart = await this.updateEpisodeChart();
 
     return {
@@ -669,7 +670,8 @@ export class WaktoonService {
 
     const resultAuthors = await this.updateAuthors();
 
-    const resultSeries = await this.updateSeries();
+    const episodes = await this.findAllEpisodes();
+    const resultSeries = await this.updateSeries(episodes);
 
     return {
       article: resultArticle,

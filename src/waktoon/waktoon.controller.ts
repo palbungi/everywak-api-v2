@@ -43,8 +43,9 @@ export class WaktoonController {
   }
 
   @Get('series/update')
-  updateSeries() {
-    return this.waktoonService.updateSeries();
+  async updateSeries() {
+    const episodes = await this.waktoonService.findAllEpisodes();
+    return this.waktoonService.updateSeries(episodes);
   }
 
   @Post('series')
@@ -69,7 +70,7 @@ export class WaktoonController {
   }
 
   // 한 시간에 한 번 게시글/에피소드/시리즈/차트 갱신
-  @Cron('1 * * * *')
+  @Cron('10 * * * *')
   updateWaktoonCron() {
     try {
       return this.waktoonService.updateWaktoon();
