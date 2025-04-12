@@ -34,7 +34,13 @@ export const SocialEnum: ReadonlyRecord<SocialType> = {
   tiktok: 'tiktok',
 };
 
-export type Role = 'master' | 'isedol' | 'family' | 'gomem' | 'academy' | 'hardcore';
+export type Role =
+  | 'master'
+  | 'isedol'
+  | 'family'
+  | 'gomem'
+  | 'academy'
+  | 'hardcore';
 
 export const RoleEnum: ReadonlyRecord<Role> = {
   master: 'master',
@@ -1456,6 +1462,101 @@ export const Waktaverse: Member[] = [
         type: 'cafe',
         name: 'meen308',
         id: 'YmEct7wpqzv3Fkoy9bzxMg',
+      },
+    ],
+  },
+  {
+    id: '01JRKZMV8F2PMB66F2BHCX04AA',
+    name: '도깨비공주 루딘',
+    role: 'hardcore',
+    lives: [
+      {
+        type: 'afreeca',
+        name: 'xxxx922',
+        id: 'xxxx922',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'x_x922',
+        id: 'w8C4PJ9vgSdcrHXab6wpuA',
+      },
+    ],
+  },
+  {
+    id: '01JRKZP7GSSSN0CKXY6XH2W0RN',
+    name: '바룬상',
+    role: 'hardcore',
+    lives: [
+      {
+        type: 'afreeca',
+        name: 'barunsang',
+        id: 'barunsang',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'barunsang',
+        id: 'Sa_eVKJdSxfvndzpVo1qqw',
+      },
+    ],
+  },
+  {
+    id: '01JRKZPD416ZFPDS05G3SSPRPH',
+    name: '제갈 통',
+    role: 'hardcore',
+    lives: [
+      {
+        type: 'afreeca',
+        name: 'jegaltong',
+        id: 'jegaltong',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'deerland1217',
+        id: 'jGAmk0zN5RaHhNSLoEp80A',
+      },
+    ],
+  },
+  {
+    id: '01JRKZPGG165YNJDKTMVP7SN1J',
+    name: '촌장 고봉',
+    role: 'hardcore',
+    lives: [
+      {
+        type: 'afreeca',
+        name: 'goatgobong',
+        id: 'goatgobong',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'jonte_',
+        id: 'QgZJB_q_4EmJzY1yQ3B_yg',
+      },
+    ],
+  },
+  {
+    id: '01JRKZPKW1BCR345JKEXCQM8V4',
+    name: '코드네임 로즈',
+    role: 'hardcore',
+    lives: [
+      {
+        type: 'afreeca',
+        name: 'coderose',
+        id: 'coderose',
+      },
+    ],
+    socials: [
+      {
+        type: 'cafe',
+        name: 'code_rose_',
+        id: '8HauMJP7UZ8YSnx-4W66Sg',
       },
     ],
   },
