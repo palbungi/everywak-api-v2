@@ -106,7 +106,7 @@ export class NavercafeService {
     return lastValueFrom(
       this.httpService
         .get(
-          `https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/27842958/articles/${articleId}`,
+          `https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/27842958/articles/${articleId}`,
           {
             headers: {
               Accept: 'application/json, text/plain, */*',

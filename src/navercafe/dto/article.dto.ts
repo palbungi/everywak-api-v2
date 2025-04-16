@@ -31,6 +31,8 @@ export class ArticleDto {
       memberLevelName: string;
       memberLevelIconUrl: string;
       currentPopularMember: boolean;
+      allowMemberAlarm: boolean;
+      isCafeMember: boolean;
     };
     subscribeWriter: {
       subscribe: boolean;
@@ -42,13 +44,19 @@ export class ArticleDto {
     decorator: {
       isShowSuicideSaver: boolean;
       isPlug: boolean;
+      articleForm?: {
+        bottomBanner: {
+          linkUrl: string;
+          thumbnail: string;
+        };
+      };
     };
     existScrapAddContent: boolean;
     template: {
       isUse: boolean;
     };
     contentHtml: string;
-    contentElements: any[];
+    customElements: any[];
     gdid: string;
     replyListOrder: string;
     isNotice: boolean;
@@ -110,6 +118,7 @@ export class ArticleDto {
     memberLevelIconUrl: string;
     personacon: number;
     currentPopularMember: boolean;
+    allowMemberAlarm: boolean;
     appliedAlready: boolean;
     permission: {
       isBoardStaff: boolean;
@@ -172,6 +181,8 @@ export class ArticleDto {
     darkUrl: string;
     showRemoveAlert: boolean;
   };
+  commAdSupport: boolean;
+  cafeStatList: string[];
   isReadOnlyMode: boolean;
   isW800: boolean;
 }
@@ -187,8 +198,10 @@ export type CommentItem = {
       url: string;
       service: string;
       type: string;
+      isAnimated: boolean;
     };
     currentPopularMember: boolean;
+    allowMemberAlarm: boolean;
   };
   content: string;
   updateDate: number;
@@ -213,4 +226,4 @@ export type CommentItem = {
     width: number;
     height: number;
   };
-}
+};
