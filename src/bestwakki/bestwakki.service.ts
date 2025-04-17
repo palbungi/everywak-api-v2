@@ -1,7 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NavercafeService } from 'src/navercafe/navercafe.service';
-import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
+import {
+  Between,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  ILike,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import {
   OrderBy,
   SearchArticleDto,
@@ -32,14 +40,6 @@ export class BestwakkiService {
       author: 'nickname',
       board: 'menuName',
     };
-    const searchTarget: Record<
-      SearchTarget,
-      (keyword: string) => FindOptionsWhere<PopularArticle>
-    > = {
-      title: (keyword) => ({ subject: ILike(`%${keyword}%`) }),
-      author: (keyword) => ({ nickname: ILike(`%${keyword}%`) }),
-      board: (keyword) => ({ menuName: ILike(`%${keyword}%`) }),
-    };
 
     const orderBy: Record<OrderBy, FindOptionsOrder<PopularArticle>> = {
       time: { articleId: 'DESC' },
@@ -48,7 +48,27 @@ export class BestwakkiService {
       up: { upCount: 'DESC' },
       comment: { commentCount: 'DESC' },
     };
-    // TODO: startAt, endAt 구현
+
+    const where: FindOptionsWhere<PopularArticle> = {};
+    if (searchArticleDto.keyword) {
+      where[searchTargetColumn[searchArticleDto.searchTarget]] = ILike(
+        `%${searchArticleDto.keyword}%`,
+      );
+    }
+    if (searchArticleDto.beginAt && searchArticleDto.endAt) {
+      where.publishedTimestamp = Between(
+        new Date(searchArticleDto.beginAt),
+        new Date(searchArticleDto.endAt),
+      );
+    } else if (searchArticleDto.beginAt) {
+      where.publishedTimestamp = MoreThanOrEqual(
+        new Date(searchArticleDto.beginAt),
+      );
+    } else if (searchArticleDto.endAt) {
+      where.publishedTimestamp = LessThanOrEqual(
+        new Date(searchArticleDto.endAt),
+      );
+    }
 
     return this.popularArticleRepository.find({
       select: [
@@ -63,11 +83,7 @@ export class BestwakkiService {
         'nickname',
         'representImage',
       ],
-      where: {
-        [searchTargetColumn[searchArticleDto.searchTarget]]: ILike(
-          `%${searchArticleDto.keyword}%`,
-        ),
-      },
+      where,
       order: orderBy[searchArticleDto.orderBy],
       take: searchArticleDto.perPage,
       skip: (searchArticleDto.page - 1) * searchArticleDto.perPage,
