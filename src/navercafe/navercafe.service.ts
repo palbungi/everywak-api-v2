@@ -54,7 +54,9 @@ export class NavercafeService {
   getArticleList(
     selectArticleListDto: SelectArticleListDto,
   ): Promise<ArticleListDto> {
-    this.logger.log(`게시판 글 목록 요청 (menuId: ${selectArticleListDto.menuId}, lastArticleId: ${selectArticleListDto.lastArticleId})`);
+    this.logger.log(
+      `게시판 글 목록 요청 (menuId: ${selectArticleListDto.menuId}, lastArticleId: ${selectArticleListDto.lastArticleId})`,
+    );
     const pagination = selectArticleListDto.lastArticleId
       ? {
           'search.queryType': 'lastArticle',
@@ -90,7 +92,7 @@ export class NavercafeService {
           perPage: 50,
         }),
       );
-      console.log(articleListResponse.articleList.length)
+      console.log(articleListResponse.articleList.length);
       if (articleListResponse.articleList.length === 0) {
         break;
       }
@@ -138,7 +140,9 @@ export class NavercafeService {
                 `${errorCode}: ${message}`,
               );
             }
-            this.logger.error(`게시글 정보 요청 실패: 알 수 없는 오류: ${JSON.stringify(err)}`);
+            this.logger.error(
+              `게시글 정보 요청 실패: 알 수 없는 오류: ${JSON.stringify(err)}`,
+            );
             console.log(err);
             throw err;
           }),

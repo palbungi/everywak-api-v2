@@ -24,7 +24,9 @@ export class BestwakkiService {
   }
 
   find(searchArticleDto: SearchArticleDto) {
-    this.logger.log(`인기글 목록 조회: ${JSON.stringify(searchArticleDto)}`);
+    this.logger.log(
+      `왁물원 인기글 목록 조회: ${JSON.stringify(searchArticleDto)}`,
+    );
     const searchTargetColumn: Record<SearchTarget, keyof PopularArticle> = {
       title: 'subject',
       author: 'nickname',
@@ -73,8 +75,7 @@ export class BestwakkiService {
   }
 
   async update() {
-    this.logger.log(`인기글 목록 업데이트 시작`);
-    const time = Date.now();
+    this.logger.log(`왁물원 인기글 목록 업데이트 시작`);
     const articles = await this.navercafeService.getPopularArticles();
     const menus = await this.navercafeService.getMenus();
 
@@ -99,7 +100,7 @@ export class BestwakkiService {
           totalScore: article.totalScore,
         }),
     );
-    this.logger.log(`인기글 업데이트 완료 (${entities.length}개)`);
+    this.logger.log(`왁물원 인기글 업데이트 완료 (${entities.length}개)`);
     return this.popularArticleRepository.upsert(entities, ['articleId']);
   }
 }
