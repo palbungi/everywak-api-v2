@@ -116,6 +116,7 @@ export class ObiService {
         id: `${dateString}:${targetMember.id}`,
         member: targetMember,
         date: dateString,
+        updatedTimestamp: new Date(),
         publishedTimestamp: new Date(writeDate),
         weather: 'fog',
         rawInfo: '정보X',
