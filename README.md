@@ -1,3 +1,5 @@
+# 조만간 지울테니 포크해둠 ㅋㅋㅋ
+
 # everywak-api-v2
 
 NestJS로 구현된 에브리왁굳 api 백엔드
